@@ -10,15 +10,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import TemplateGallery from "@/components/editor/TemplateGallery";
 import { exportToHTML } from "@/utils/exportHTML";
 import { saveProject } from "@/lib/db";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import AuthGate from "@/components/auth/AuthGate";
+import { useAuth } from "@/context/AuthContext";
 
 export default function EditorPage() {
   const { sections, undo, redo, historyIndex, history, selectedId, lastSavedHistoryIndex, markSaved } = useBuilderStore();
+  const { user } = useAuth();
+  
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
   const [showTemplates, setShowTemplates] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [projectId, setProjectId] = useState<string | null>(null);
-  // Optional: you can extract this to store if title editing is needed
   const [pageTitle, setPageTitle] = useState("Untitled Page");
 
   const isUnsaved = historyIndex !== lastSavedHistoryIndex;
@@ -29,8 +32,9 @@ export default function EditorPage() {
   };
 
   const handleSave = async () => {
+    if (!user) return;
     try {
-      const newProjectId = await saveProject("anonymous_user", pageTitle, sections, projectId);
+      const newProjectId = await saveProject(user.uid, pageTitle, sections, projectId);
       setProjectId(newProjectId);
       markSaved();
       showToast("Project saved");
@@ -66,7 +70,8 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-cream">
+    <AuthGate>
+      <div className="flex flex-col h-screen overflow-hidden bg-cream">
       {/* Top Bar */}
       <div className="h-[52px] bg-white border-b border-divider flex items-center justify-between px-6 shrink-0 z-20">
         {/* Left */}
@@ -197,5 +202,6 @@ export default function EditorPage() {
         )}
       </AnimatePresence>
     </div>
+    </AuthGate>
   );
 }

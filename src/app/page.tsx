@@ -3,37 +3,67 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import AuthGate from "@/components/auth/AuthGate";
+import { useAuth } from "@/context/AuthContext";
+import { listProjects, ProjectDoc } from "@/lib/db";
+import { useBuilderStore } from "@/store/builderStore";
 
-const STUB_PROJECTS = [
-  { id: "p1", name: "Startup Launch", updated: "Last edited 2 hours ago" },
-  { id: "p2", name: "Agency Portfolio", updated: "Last edited 1 day ago" },
-  { id: "p3", name: "Blank Page", updated: "Last edited 3 days ago" },
-];
+
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { user, signOut } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState<ProjectDoc[]>([]);
+  const loadTemplate = useBuilderStore(state => state.loadTemplate);
 
-  // Simulate loading state
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
+    async function fetchProjects() {
+      if (user) {
+        setIsLoading(true);
+        try {
+          const userProjects = await listProjects(user.uid);
+          setProjects(userProjects);
+        } catch (err) {
+          console.error("Error loading projects", err);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    }
+    fetchProjects();
+  }, [user]);
+
+  const handleOpenProject = (project: ProjectDoc) => {
+    loadTemplate(project.sections);
+    // Ideally we'd set the projectId in store, but our Editor currently works statelessly for now
+    router.push("/editor");
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream font-sans">
-      {/* Top Nav */}
-      <nav className="h-[72px] px-8 flex items-center justify-between shrink-0">
-        <div className="font-heading font-bold text-[24px] text-wine">FORMA</div>
-        <button
-          onClick={() => router.push("/editor")}
-          className="bg-wine text-white text-[13px] px-[24px] py-[10px] rounded-none hover:bg-wine-light transition-colors"
-        >
-          New Project
-        </button>
-      </nav>
+    <AuthGate>
+      <div className="min-h-screen flex flex-col bg-cream font-sans">
+        {/* Top Nav */}
+        <nav className="h-[72px] px-8 flex items-center justify-between shrink-0 border-b border-divider/10 bg-white">
+          <div className="font-heading font-bold text-[24px] text-wine">FORMA</div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[13px] text-stone">{user?.displayName}</span>
+              <button
+                onClick={signOut}
+                className="text-[12px] text-wine hover:underline transition-all"
+              >
+                Sign Out
+              </button>
+            </div>
+            <button
+              onClick={() => router.push("/editor")}
+              className="bg-wine text-white text-[13px] px-[24px] py-[10px] rounded-none hover:bg-wine-light transition-colors"
+            >
+              New Project
+            </button>
+          </div>
+        </nav>
 
       {/* Main Area */}
       <main className="flex-1 flex flex-col px-8 py-16">
@@ -57,7 +87,7 @@ export default function DashboardPage() {
                     <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_1.5s_infinite]" />
                   </div>
                 ))
-              : STUB_PROJECTS.map((project, i) => (
+              : projects.map((project, i) => (
                   <motion.button
                     key={project.id}
                     initial={{ opacity: 0, y: 18 }}
@@ -67,17 +97,22 @@ export default function DashboardPage() {
                       ease: [0.22, 1, 0.36, 1],
                       delay: i * 0.08,
                     }}
-                    onClick={() => router.push("/editor")}
+                    onClick={() => handleOpenProject(project)}
                     className="group flex flex-col text-left h-[180px] bg-wine-muted px-6 py-5 border-t-[3px] border-t-wine transition-all duration-220 hover:bg-white hover:shadow-[0_2px_16px_rgba(107,26,42,0.08)] cursor-pointer"
                   >
-                    <h2 className="font-heading font-bold text-[20px] text-charcoal mt-1 mb-auto">
-                      {project.name}
+                    <h2 className="font-heading font-bold text-[20px] text-charcoal mt-1 mb-auto truncate w-full">
+                      {project.title}
                     </h2>
                     <p className="text-[12px] text-stone">
-                      {project.updated}
+                      {new Date(project.updatedAt).toLocaleDateString()}
                     </p>
                   </motion.button>
                 ))}
+            {!isLoading && projects.length === 0 && (
+              <div className="col-span-1 md:col-span-3 text-center py-12 text-[14px] text-stone border border-dashed border-divider">
+                No projects yet. Create your first landing page!
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -97,6 +132,7 @@ export default function DashboardPage() {
           }
         }
       `}} />
-    </div>
+      </div>
+    </AuthGate>
   );
 }
