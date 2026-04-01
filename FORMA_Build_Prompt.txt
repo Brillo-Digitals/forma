@@ -1,0 +1,3574 @@
+
+
+
+
+
+
+
+
+FORMA
+
+
+
+SaaS Landing Page Builder
+
+
+
+
+
+
+
+
+
+Complete AI Build Prompt & Design System
+
+
+
+
+
+
+
+Command-by-Command. Phase-by-Phase. Zero Guesswork.
+
+
+
+
+
+
+
+— Brillo Digitals Internal Document —
+
+
+
+
+
+HOW TO USE THIS DOCUMENT
+
+
+
+
+
+Read This First
+
+
+
+This document is your complete operating manual for building FORMA — a classy, conversion-focused SaaS Landing Page Builder — using an AI coding assistant (Cursor, Claude, ChatGPT, or similar).
+
+
+
+
+
+
+
+Each phase in this document contains one or more prompts that you copy and paste directly into your AI. After each phase, you will see a red STOP block. That block means:
+
+
+
+
+
+
+
+
+
+Do not ask the AI for anything else.
+
+
+
+
+
+Review the output in your browser or code editor.
+
+
+
+
+
+Only move to the next phase when you have confirmed it works and you are ready.
+
+
+
+
+
+
+
+The backend phases are intentionally withheld until you explicitly command the AI to proceed. This ensures the frontend is solid, the design is pixel-perfect, and you are not wasting time building on an unstable foundation.
+
+
+
+
+
+
+
+Every prompt in this document contains the exact language, design tokens, component names, and instructions the AI needs. You do not need to explain the design separately — it is embedded in each prompt.
+
+
+
+
+
+
+
+
+
+DESIGN SYSTEM
+
+
+
+
+
+FORMA Design Language
+
+
+
+FORMA is built around a single aesthetic principle: restrained luxury. The design must feel like a premium editorial product — warm cream surfaces, deep wine accents, refined serif typography, and motion that breathes rather than performs.
+
+
+
+
+
+
+
+Do not allow the AI to use Inter, Roboto, or any system sans-serif font. Do not allow purple gradients, blue buttons, or card shadows that look like Material Design. If the AI deviates from the design system below, correct it immediately before continuing.
+
+
+
+
+
+Color Palette
+
+--color-wine
+
+#6B1A2A   Deep wine — primary brand color
+
+--color-wine-light
+
+#8C2236   Hover/accent wine
+
+--color-wine-muted
+
+#F5EEF0   Blush background tint
+
+--color-cream
+
+#FDFAF8   Page background (warm off-white)
+
+--color-charcoal
+
+#2A2228   Headlines and body text
+
+--color-stone
+
+#7A6E72   Muted / secondary text
+
+--color-gold
+
+#C49A4A   Decorative accent lines, icons
+
+--color-divider
+
+#E8DDE0   Hairline rules and borders
+
+
+
+
+
+Typography
+
+Display / Headings
+
+Cormorant Garamond — Bold, serif, editorial
+
+Body / UI text
+
+DM Sans — Clean, geometric, readable
+
+Monospace / Code
+
+JetBrains Mono — Code blocks and labels
+
+Scale — Display
+
+72px / line-height 1.1 / tracking –0.02em
+
+Scale — H1
+
+48px / line-height 1.15 / tracking –0.01em
+
+Scale — H2
+
+34px / line-height 1.2
+
+Scale — H3
+
+24px / line-height 1.3
+
+Scale — Body
+
+16px / line-height 1.7
+
+Scale — Small
+
+13px / line-height 1.6 / tracking 0.02em
+
+
+
+
+
+Spacing System
+
+--space-xs
+
+4px
+
+--space-sm
+
+8px
+
+--space-md
+
+16px
+
+--space-lg
+
+24px
+
+--space-xl
+
+40px
+
+--space-2xl
+
+64px
+
+--space-3xl
+
+96px
+
+--space-4xl
+
+128px
+
+
+
+
+
+Permitted Animations
+
+
+
+All animations must feel like a breath — not a performance. The following are the only animation styles permitted in FORMA:
+
+
+
+
+
+
+
+
+
+
+
+A
+
+Entrance Fade-Up — Elements enter from 18px below with opacity 0 → 1, duration 0.6s, ease: cubic-bezier(0.22, 1, 0.36, 1), staggered by 80ms per child.
+
+
+
+
+
+
+
+
+
+
+
+B
+
+Underline Reveal — On hover over links and nav items, a 1px wine-colored underline grows from left to right using scaleX(0) → scaleX(1) with transform-origin: left, duration 0.3s ease-out.
+
+
+
+
+
+
+
+
+
+
+
+C
+
+Button Press — Buttons scale down to 0.97 on mousedown, spring back on release. Duration 150ms. No glow, no shadow pulse.
+
+
+
+
+
+
+
+
+
+
+
+D
+
+Panel Slide-In — The properties sidebar slides in from the right: translateX(100%) → translateX(0), duration 0.35s, ease: cubic-bezier(0.22, 1, 0.36, 1).
+
+
+
+
+
+
+
+
+
+
+
+E
+
+Section Highlight Pulse — When a section is selected in the builder, its border pulses once: opacity 0 → 1 → 0.6 → 1, duration 0.5s. No looping.
+
+
+
+
+
+
+
+
+
+
+
+F
+
+Drag Ghost — While dragging a section, the dragged item renders at 70% opacity with a subtle wine border. The drop target shows a 2px wine line.
+
+
+
+
+
+
+
+
+
+
+
+G
+
+Skeleton Loader — Before content loads, show a shimmer animation: linear-gradient moving from left to right in wine-muted tones. No spinners.
+
+
+
+
+
+
+
+
+
+
+
+No other animations are permitted. No bouncing, no rotating loaders, no particle effects, no confetti. If the AI adds any animation not listed above, instruct it to remove it.
+
+
+
+
+
+
+
+
+
+PHASE 0
+
+
+
+
+
+Project Setup & Foundation
+
+
+
+Use this prompt exactly once, at the very beginning of the project. Do not modify it.
+
+
+
+
+
+
+
+Prompt 0.1 — Initialize the Project
+
+
+
+
+
+
+
+You are building a SaaS Landing Page Builder called FORMA.
+
+
+
+
+
+
+
+Initialize the project with the following stack:
+
+
+
+- Next.js 14 with App Router
+
+
+
+- TypeScript (strict mode)
+
+
+
+- Tailwind CSS
+
+
+
+- Zustand for state management
+
+
+
+- dnd-kit for drag and drop
+
+
+
+- Framer Motion for animations
+
+
+
+- Google Fonts: Cormorant Garamond, DM Sans, JetBrains Mono
+
+
+
+
+
+
+
+Set up the global CSS variables in globals.css:
+
+
+
+--color-wine: #6B1A2A
+
+
+
+--color-wine-light: #8C2236
+
+
+
+--color-wine-muted: #F5EEF0
+
+
+
+--color-cream: #FDFAF8
+
+
+
+--color-charcoal: #2A2228
+
+
+
+--color-stone: #7A6E72
+
+
+
+--color-gold: #C49A4A
+
+
+
+--color-divider: #E8DDE0
+
+
+
+
+
+
+
+Set the page background to #FDFAF8 (cream).
+
+
+
+Set the default font to DM Sans.
+
+
+
+Set heading font to Cormorant Garamond.
+
+
+
+
+
+
+
+Create the following folder structure under /src:
+
+
+
+- /components/sections/   (Hero, Features, Testimonials, Pricing, Footer)
+
+
+
+- /components/editor/     (Canvas, Sidebar, Toolbar, SectionBlock)
+
+
+
+- /components/ui/         (Button, Input, Toggle, Tooltip)
+
+
+
+- /store/                 (builderStore.ts)
+
+
+
+- /types/                 (index.ts — shared types)
+
+
+
+- /templates/             (default.ts, minimal.ts)
+
+
+
+- /utils/                 (generateId.ts, exportHTML.ts)
+
+
+
+
+
+
+
+Do not build any UI yet. Only set up the project.
+
+
+
+When done, confirm the folder structure and installed packages.
+
+
+
+
+
+
+
+◆  STOP — PHASE 0 COMPLETE — Review folder structure before continuing  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+PHASE 1
+
+
+
+
+
+Static Sections & Data Model
+
+
+
+This phase builds all five section components as static, styled React components using the FORMA design system. No interactivity yet — just perfect markup and visual fidelity.
+
+
+
+
+
+
+
+Prompt 1.1 — Define the Data Model
+
+
+
+
+
+
+
+In /src/types/index.ts, define the following TypeScript interfaces:
+
+
+
+
+
+
+
+SectionType: &apos;hero&apos; | &apos;features&apos; | &apos;testimonials&apos; | &apos;pricing&apos; | &apos;footer&apos;
+
+
+
+
+
+
+
+SectionProps: {
+
+
+
+  id: string
+
+
+
+  type: SectionType
+
+
+
+  props: Record<string, any>
+
+
+
+  order: number
+
+
+
+}
+
+
+
+
+
+
+
+PageState: {
+
+
+
+  sections: SectionProps[]
+
+
+
+  selectedId: string | null
+
+
+
+  isDragging: boolean
+
+
+
+  history: SectionProps[][]
+
+
+
+  historyIndex: number
+
+
+
+}
+
+
+
+
+
+
+
+Also export a DEFAULT_PAGE constant with a single hero section:
+
+
+
+{
+
+
+
+  id: &apos;section-1&apos;,
+
+
+
+  type: &apos;hero&apos;,
+
+
+
+  order: 0,
+
+
+
+  props: {
+
+
+
+    headline: &apos;Build Pages That Convert&apos;,
+
+
+
+    subheadline: &apos;A refined, powerful landing page builder for serious products.&apos;,
+
+
+
+    ctaText: &apos;Start Building&apos;,
+
+
+
+    ctaHref: &apos;#&apos;,
+
+
+
+    bgColor: &apos;#FDFAF8&apos;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+Prompt 1.2 — Build the Hero Section
+
+
+
+
+
+
+
+Build the Hero section component at /src/components/sections/HeroSection.tsx
+
+
+
+
+
+
+
+DESIGN RULES (follow exactly — no deviations):
+
+
+
+- Background: use props.bgColor, defaulting to var(--color-cream)
+
+
+
+- No image backgrounds, no gradient overlays, no blobs or shapes
+
+
+
+- Layout: full-width, centered, min-height 92vh, flex column, center aligned
+
+
+
+- Above the headline: a small all-caps label in DM Sans, 11px,
+
+
+
+  letter-spacing 0.14em, color var(--color-stone)
+
+
+
+  Text: &apos;FORMA — Landing Page Builder&apos;
+
+
+
+- Headline: Cormorant Garamond Bold, 72px, color var(--color-charcoal),
+
+
+
+  max-width 720px, line-height 1.1, letter-spacing -0.02em
+
+
+
+- Subheadline: DM Sans, 18px, color var(--color-stone),
+
+
+
+  max-width 540px, line-height 1.7, margin-top 20px
+
+
+
+- CTA Button: background var(--color-wine), text white,
+
+
+
+  DM Sans Medium, 14px, padding 14px 36px,
+
+
+
+  border-radius 2px (NOT rounded, NOT pill),
+
+
+
+  no box-shadow, hover: background var(--color-wine-light),
+
+
+
+  transition 200ms ease
+
+
+
+- Below CTA: a subtle hairline divider in var(--color-divider),
+
+
+
+  width 48px, centered, margin-top 48px
+
+
+
+
+
+
+
+ANIMATION:
+
+
+
+- Wrap children in Framer Motion
+
+
+
+- Label animates: opacity 0 → 1, y 12 → 0, delay 0s, duration 0.5s
+
+
+
+- Headline: opacity 0 → 1, y 18 → 0, delay 0.1s, duration 0.6s,
+
+
+
+  ease [0.22, 1, 0.36, 1]
+
+
+
+- Subheadline: opacity 0 → 1, y 18 → 0, delay 0.2s, duration 0.6s
+
+
+
+- Button: opacity 0 → 1, y 12 → 0, delay 0.32s, duration 0.5s
+
+
+
+
+
+
+
+Do not add any other UI. No navbar yet. Just the Hero.
+
+
+
+
+
+
+
+Prompt 1.3 — Build the Features Section
+
+
+
+
+
+
+
+Build the Features section at /src/components/sections/FeaturesSection.tsx
+
+
+
+
+
+
+
+DESIGN RULES:
+
+
+
+- Background: var(--color-wine-muted) — the pale blush tint
+
+
+
+- Padding: 96px top and bottom
+
+
+
+- Section label above title: DM Sans 11px, letter-spacing 0.14em,
+
+
+
+  all-caps, color var(--color-wine), text: &apos;WHY FORMA&apos;
+
+
+
+- Title: Cormorant Garamond Bold, 48px, color var(--color-charcoal),
+
+
+
+  max-width 560px
+
+
+
+- Feature cards: 3-column grid, gap 32px
+
+
+
+- Each card:
+
+
+
+  · No card shadow, no rounded corners
+
+
+
+  · Left border only: 2px solid var(--color-gold)
+
+
+
+  · Padding: 24px
+
+
+
+  · Background: var(--color-cream)
+
+
+
+  · Icon: a simple geometric icon (use Lucide React),
+
+
+
+    color var(--color-wine), size 20px
+
+
+
+  · Feature title: DM Sans SemiBold, 15px, color var(--color-charcoal)
+
+
+
+  · Feature body: DM Sans, 14px, color var(--color-stone), line-height 1.65
+
+
+
+
+
+
+
+Default 3 features:
+
+
+
+1. Drag & Compose — &apos;Rearrange sections with precision. Every movement intentional.&apos;
+
+
+
+2. Live Editing — &apos;Click any element to edit it. Changes reflect in real time.&apos;
+
+
+
+3. Export Ready — &apos;Export clean HTML/CSS or React components with one click.&apos;
+
+
+
+
+
+
+
+ANIMATION:
+
+
+
+- Cards animate in with fade-up, staggered 120ms each, on scroll using
+
+
+
+  Framer Motion&apos;s whileInView with once: true
+
+
+
+
+
+
+
+Prompt 1.4 — Build Testimonials, Pricing, and Footer Sections
+
+
+
+
+
+
+
+Build three more section components:
+
+
+
+
+
+
+
+1. TestimonialsSection.tsx
+
+
+
+   - Background: var(--color-cream)
+
+
+
+   - Centered layout, padding 96px
+
+
+
+   - Section label: &apos;WHAT THEY SAY&apos;, same style as Features label
+
+
+
+   - 3 testimonial cards in a row:
+
+
+
+     · No border, no shadow
+
+
+
+     · A thin top rule in var(--color-divider)
+
+
+
+     · Quote in Cormorant Garamond Italic, 20px, color var(--color-charcoal)
+
+
+
+     · Author name: DM Sans SemiBold 13px, letter-spacing 0.06em, all-caps
+
+
+
+     · Author role: DM Sans 13px, color var(--color-stone)
+
+
+
+   - Default 3 placeholder testimonials with realistic copy
+
+
+
+
+
+
+
+2. PricingSection.tsx
+
+
+
+   - Background: var(--color-wine)
+
+
+
+   - All text: white or rgba(255,255,255,0.7)
+
+
+
+   - Title: Cormorant Garamond Bold, 48px, white
+
+
+
+   - 2 pricing tiers side by side:
+
+
+
+     · Starter: $29/mo — Build up to 5 pages, export HTML
+
+
+
+     · Pro: $79/mo — Unlimited pages, AI generator, live publish
+
+
+
+   - Cards: background rgba(255,255,255,0.08), border 1px solid
+
+
+
+     rgba(255,255,255,0.15), no rounded corners
+
+
+
+   - CTA buttons: outlined (border 1px white, transparent bg)
+
+
+
+     hover: bg white, text var(--color-wine)
+
+
+
+   - Pro plan has a small badge: &apos;MOST POPULAR&apos; in gold (var(--color-gold))
+
+
+
+
+
+
+
+3. FooterSection.tsx
+
+
+
+   - Background: var(--color-charcoal)
+
+
+
+   - Text: rgba(255,255,255,0.5)
+
+
+
+   - Left: FORMA wordmark in Cormorant Garamond, white, 24px
+
+
+
+   - Right: &apos;Built with FORMA.&apos; in DM Sans 13px
+
+
+
+   - A thin top divider in rgba(255,255,255,0.08)
+
+
+
+   - Padding 40px top and bottom
+
+
+
+   - No social links, no extra columns — keep it minimal
+
+
+
+
+
+
+
+◆  STOP — PHASE 1 COMPLETE — Review all 5 section components before continuing  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+PHASE 2
+
+
+
+
+
+Dynamic JSON Rendering & Zustand Store
+
+
+
+This phase converts the static sections into a live, data-driven builder. The page is no longer hardcoded — it renders from a JSON structure stored in Zustand.
+
+
+
+
+
+
+
+Prompt 2.1 — Build the Zustand Store
+
+
+
+
+
+
+
+Build the Zustand store at /src/store/builderStore.ts
+
+
+
+
+
+
+
+The store must manage the following state:
+
+
+
+- sections: SectionProps[]  (starts with DEFAULT_PAGE)
+
+
+
+- selectedId: string | null
+
+
+
+- isDragging: boolean
+
+
+
+- history: SectionProps[][]  (for undo/redo)
+
+
+
+- historyIndex: number
+
+
+
+
+
+
+
+The store must expose the following actions:
+
+
+
+
+
+
+
+addSection(type: SectionType) — adds a new section at the end
+
+
+
+  with a generated ID and default props for that type
+
+
+
+
+
+
+
+deleteSection(id: string) — removes section from array
+
+
+
+
+
+
+
+selectSection(id: string | null) — sets selectedId
+
+
+
+
+
+
+
+updateSectionProp(id, key, value) — updates a single prop
+
+
+
+  on the specified section without mutating others
+
+
+
+
+
+
+
+reorderSections(newOrder: SectionProps[]) — replaces sections array
+
+
+
+  after a drag-and-drop reorder
+
+
+
+
+
+
+
+undo() — moves historyIndex back by 1 and restores that snapshot
+
+
+
+
+
+
+
+redo() — moves historyIndex forward by 1 and restores that snapshot
+
+
+
+
+
+
+
+Every mutation except selectSection must push the current state
+
+
+
+to history before applying the change (max history depth: 30).
+
+
+
+
+
+
+
+Use immer middleware for clean state mutations.
+
+
+
+
+
+
+
+Prompt 2.2 — Build the Canvas
+
+
+
+
+
+
+
+Build the Canvas component at /src/components/editor/Canvas.tsx
+
+
+
+
+
+
+
+The Canvas renders all sections from the Zustand store in order.
+
+
+
+
+
+
+
+For each section in the store&apos;s sections array:
+
+
+
+- Render the matching component (Hero, Features, etc.) with its props
+
+
+
+- Wrap it in a SectionBlock (built next prompt)
+
+
+
+- Pass the section&apos;s id and props down
+
+
+
+
+
+
+
+Use a switch statement or lookup map to resolve section type → component.
+
+
+
+
+
+
+
+The Canvas itself:
+
+
+
+- Takes the full available height of the editor area
+
+
+
+- Background: var(--color-cream)
+
+
+
+- Overflow: auto (scrollable vertically)
+
+
+
+- No padding of its own — let sections handle their own padding
+
+
+
+
+
+
+
+When no sections exist, show a centered empty state:
+
+
+
+- Icon: a plus symbol in var(--color-wine), 32px
+
+
+
+- Text: &apos;Your canvas is empty.&apos; in Cormorant Garamond Italic, 22px, stone
+
+
+
+- Subtext: &apos;Use the toolbar to add your first section.&apos; in DM Sans 14px, stone
+
+
+
+
+
+
+
+Prompt 2.3 — Build the SectionBlock Wrapper
+
+
+
+
+
+
+
+Build SectionBlock at /src/components/editor/SectionBlock.tsx
+
+
+
+
+
+
+
+SectionBlock wraps each section in the Canvas and handles selection.
+
+
+
+
+
+
+
+Props: { id: string, children: React.ReactNode }
+
+
+
+
+
+
+
+Behavior:
+
+
+
+- On click: call selectSection(id) from the store
+
+
+
+- When selected (id === selectedId from store):
+
+
+
+  · Show a 2px wine border around the entire section block
+
+
+
+  · Show a small floating label at the top-left corner of the block:
+
+
+
+    background var(--color-wine), white DM Sans 11px text
+
+
+
+    showing the section type name (e.g. &apos;HERO&apos;)
+
+
+
+  · On mount of the border, animate it:
+
+
+
+    opacity 0 → 1 → 0.6 → 1, duration 0.5s, no loop
+
+
+
+- When not selected:
+
+
+
+  · On hover: show a thin 1px var(--color-divider) dashed border
+
+
+
+  · Show a small floating menu at the top-right:
+
+
+
+    · Delete button (trash icon, Lucide React)
+
+
+
+    · These only appear on hover (opacity transition 200ms)
+
+
+
+
+
+
+
+Position: relative (to contain the floating label and menu).
+
+
+
+Do not add any other controls yet.
+
+
+
+
+
+
+
+◆  STOP — PHASE 2 COMPLETE — Confirm dynamic rendering and section selection work  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+PHASE 3
+
+
+
+
+
+Editor Layout, Toolbar & Properties Sidebar
+
+
+
+This phase assembles the full builder layout — the left toolbar, center canvas, and right sidebar that appears when a section is selected.
+
+
+
+
+
+
+
+Prompt 3.1 — Build the Editor Layout
+
+
+
+
+
+
+
+Build the main editor layout at /src/app/editor/page.tsx
+
+
+
+
+
+
+
+Layout: full viewport height, no scroll on the root
+
+
+
+Three columns — fixed, flexible, conditional:
+
+
+
+
+
+
+
+LEFT COLUMN — Toolbar (width: 64px, fixed)
+
+
+
+  - Background: var(--color-charcoal)
+
+
+
+  - Contains icon buttons (built in Prompt 3.2)
+
+
+
+  - No labels, only icons with Tooltips on hover
+
+
+
+  - A thin right border: 1px solid rgba(255,255,255,0.06)
+
+
+
+
+
+
+
+CENTER COLUMN — Canvas (flex: 1, overflow-y: auto)
+
+
+
+  - This is where the Canvas component renders
+
+
+
+  - Background: var(--color-cream)
+
+
+
+  - A subtle grain texture overlay: use a repeating SVG noise pattern
+
+
+
+    at 4% opacity — gives depth without competing with content
+
+
+
+
+
+
+
+RIGHT COLUMN — Sidebar (width: 320px, visible only when selectedId !== null)
+
+
+
+  - Slides in from the right using Framer Motion:
+
+
+
+    AnimatePresence + initial: {x: 100, opacity: 0}
+
+
+
+    animate: {x: 0, opacity: 1}, duration 0.35s, ease [0.22, 1, 0.36, 1]
+
+
+
+  - Background: white
+
+
+
+  - Left border: 1px solid var(--color-divider)
+
+
+
+
+
+
+
+TOP BAR — above all three columns (height: 52px)
+
+
+
+  - Background: white
+
+
+
+  - Bottom border: 1px solid var(--color-divider)
+
+
+
+  - Left: FORMA wordmark (Cormorant Garamond Bold 20px, wine)
+
+
+
+  - Center: page title input (editable inline, DM Sans 14px, charcoal)
+
+
+
+  - Right: Undo, Redo icon buttons + &apos;Preview&apos; outlined button +
+
+
+
+    &apos;Export&apos; filled wine button
+
+
+
+  - All top bar buttons: DM Sans 13px, no rounded corners,
+
+
+
+    border-radius 2px only
+
+
+
+
+
+
+
+Do not implement the Sidebar content yet. Just render its shell with
+
+
+
+a placeholder message: &apos;Select a section to edit its properties.&apos;
+
+
+
+
+
+
+
+Prompt 3.2 — Build the Toolbar
+
+
+
+
+
+
+
+Build the left Toolbar at /src/components/editor/Toolbar.tsx
+
+
+
+
+
+
+
+The Toolbar contains buttons to add sections to the canvas.
+
+
+
+Each button adds a new section via addSection() from the store.
+
+
+
+
+
+
+
+Sections available to add:
+
+
+
+- Hero (icon: Layout)
+
+
+
+- Features (icon: Layers)
+
+
+
+- Testimonials (icon: MessageSquare)
+
+
+
+- Pricing (icon: Tag)
+
+
+
+- Footer (icon: AlignBottom)
+
+
+
+
+
+
+
+Visual design for each button:
+
+
+
+- Icon: Lucide React, 18px, color rgba(255,255,255,0.5)
+
+
+
+- On hover: icon becomes white, background becomes rgba(255,255,255,0.06)
+
+
+
+- Active state (if this section type exists on canvas): icon color var(--color-gold)
+
+
+
+- Tooltip on hover (right side): DM Sans 12px, background var(--color-charcoal),
+
+
+
+  white text, padding 6px 10px, no rounded corners
+
+
+
+
+
+
+
+Add a divider between the section buttons and two utility buttons at the bottom:
+
+
+
+- Undo (icon: Undo2)
+
+
+
+- Redo (icon: Redo2)
+
+
+
+
+
+
+
+All transitions on the toolbar buttons: 180ms ease
+
+
+
+No text labels — icons only.
+
+
+
+
+
+
+
+Prompt 3.3 — Build the Properties Sidebar
+
+
+
+
+
+
+
+Build the Properties Sidebar at /src/components/editor/Sidebar.tsx
+
+
+
+
+
+
+
+The Sidebar renders when a section is selected.
+
+
+
+It reads the selected section from the Zustand store
+
+
+
+and renders controls based on the section&apos;s props.
+
+
+
+
+
+
+
+SIDEBAR HEADER:
+
+
+
+- Section type name: DM Sans SemiBold 13px, all-caps, charcoal,
+
+
+
+  letter-spacing 0.08em
+
+
+
+- Close button (X icon) at the right — calls selectSection(null)
+
+
+
+- Bottom border: 1px solid var(--color-divider)
+
+
+
+
+
+
+
+CONTROL GROUPS:
+
+
+
+Each prop renders as a labeled control group:
+
+
+
+- Label: DM Sans 11px, all-caps, letter-spacing 0.1em, stone
+
+
+
+- Spacing: 24px between groups
+
+
+
+
+
+
+
+Control types based on prop name/value:
+
+
+
+- Text props (headline, subheadline, ctaText, etc.):
+
+
+
+  → Textarea (auto-resize), DM Sans 14px, border 1px solid var(--color-divider),
+
+
+
+    focus border var(--color-wine), no rounded corners, no box-shadow,
+
+
+
+    padding 10px 12px
+
+
+
+- Color props (bgColor, textColor):
+
+
+
+  → A color swatch button that opens a native color picker,
+
+
+
+    showing current color as a 24x24 square (no rounded corners)
+
+
+
+    next to a small hex code in DM Sans Mono 12px
+
+
+
+- Boolean props (showCta, showImage):
+
+
+
+  → A minimal toggle switch: track in var(--color-divider),
+
+
+
+    active track in var(--color-wine), thumb white 18px circle,
+
+
+
+    transition 200ms
+
+
+
+
+
+
+
+Every change must call updateSectionProp(id, key, value) from the store.
+
+
+
+All updates are live — no submit button.
+
+
+
+
+
+
+
+At the bottom of the sidebar: a &apos;Delete Section&apos; text link
+
+
+
+(DM Sans 13px, color var(--color-wine), no underline on default,
+
+
+
+underline on hover) — calls deleteSection(id) and closes the sidebar.
+
+
+
+
+
+
+
+◆  STOP — PHASE 3 COMPLETE — Confirm sidebar slides in, controls update the canvas live  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+PHASE 4
+
+
+
+
+
+Drag & Drop Reordering + Responsive Preview
+
+
+
+This phase adds dnd-kit for section reordering and a responsive preview mode that shows how the page looks on mobile vs desktop.
+
+
+
+
+
+
+
+Prompt 4.1 — Drag & Drop with dnd-kit
+
+
+
+
+
+
+
+Implement drag-and-drop section reordering using dnd-kit.
+
+
+
+
+
+
+
+Wrap the Canvas with DndContext and SortableContext from dnd-kit.
+
+
+
+Each SectionBlock becomes a useSortable item.
+
+
+
+
+
+
+
+Drag handle:
+
+
+
+- A small 6-dot grid icon (GripVertical from Lucide) at the left edge
+
+
+
+  of each SectionBlock, visible only on hover
+
+
+
+- Color: var(--color-stone), hover: var(--color-wine)
+
+
+
+- Cursor: grab
+
+
+
+
+
+
+
+While dragging:
+
+
+
+- The dragged section renders at 70% opacity
+
+
+
+- Apply a 2px wine border to the dragged section&apos;s ghost
+
+
+
+- The drop target shows a 3px horizontal line in var(--color-wine)
+
+
+
+  above the target position — not a full border, just a line
+
+
+
+
+
+
+
+On drag end:
+
+
+
+- Call reorderSections() with the new array order from arrayMove
+
+
+
+
+
+
+
+Collision detection: closestCenter
+
+
+
+Sensor: PointerSensor with a 5px activation distance
+
+
+
+(to avoid accidental drags when clicking to select)
+
+
+
+
+
+
+
+Do not add keyboard sensor — keep it pointer only.
+
+
+
+
+
+
+
+Prompt 4.2 — Responsive Preview Mode
+
+
+
+
+
+
+
+Add a responsive preview mode to the editor.
+
+
+
+
+
+
+
+In the top bar, add two icon buttons after the Undo/Redo group:
+
+
+
+- Monitor icon (desktop view, active by default)
+
+
+
+- Smartphone icon (mobile view)
+
+
+
+
+
+
+
+When mobile view is active:
+
+
+
+- The canvas area constrains to a centered container, max-width 390px
+
+
+
+- A subtle phone frame appears around it: rounded-none top/bottom,
+
+
+
+  border 1px solid var(--color-divider), shadow: none
+
+
+
+- All section components must already be responsive (enforce this now
+
+
+
+  if any section is not — fix it)
+
+
+
+- The canvas background outside the phone frame: var(--color-wine-muted)
+
+
+
+
+
+
+
+When desktop view is active:
+
+
+
+- Canvas returns to full width
+
+
+
+- No frame
+
+
+
+
+
+
+
+Switching between views must be animated:
+
+
+
+- The canvas container width transitions with CSS transition: width 0.35s ease
+
+
+
+
+
+
+
+Store the current view mode (desktop | mobile) in a local React state,
+
+
+
+not in Zustand.
+
+
+
+
+
+
+
+◆  STOP — PHASE 4 COMPLETE — Confirm drag/drop reorders, preview toggle works  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+PHASE 5
+
+
+
+
+
+Templates & Dashboard
+
+
+
+Before any backend work, build the templates system and the dashboard landing page. These complete the front-end experience.
+
+
+
+
+
+
+
+Prompt 5.1 — Templates
+
+
+
+
+
+
+
+Build a templates system.
+
+
+
+
+
+
+
+In /src/templates/, create three template files:
+
+
+
+
+
+
+
+1. blank.ts — empty sections array, title: &apos;Blank Page&apos;
+
+
+
+
+
+
+
+2. startup.ts — 4 sections in order:
+
+
+
+   Hero (conversion-focused copy), Features (3 items),
+
+
+
+   Pricing (2 tiers), Footer
+
+
+
+   Title: &apos;Startup Launch&apos;
+
+
+
+
+
+
+
+3. agency.ts — 4 sections in order:
+
+
+
+   Hero (service-focused copy), Features (3 items),
+
+
+
+   Testimonials (3 cards), Footer
+
+
+
+   Title: &apos;Agency Portfolio&apos;
+
+
+
+
+
+
+
+Each template exports a TemplateDefinition object with:
+
+
+
+{ id, title, description, sections: SectionProps[] }
+
+
+
+
+
+
+
+Build a TemplateGallery component at
+
+
+
+/src/components/editor/TemplateGallery.tsx
+
+
+
+
+
+
+
+The gallery is a modal (overlay) triggered by a &apos;Templates&apos; button
+
+
+
+in the top bar of the editor.
+
+
+
+
+
+
+
+Modal design:
+
+
+
+- Overlay: rgba(42, 34, 40, 0.7) — the charcoal at 70% opacity
+
+
+
+- Modal panel: white, no rounded corners, max-width 780px,
+
+
+
+  max-height 85vh, centered
+
+
+
+- Header: &apos;Choose a Template&apos; in Cormorant Garamond Bold 32px,
+
+
+
+  close button (X) at right
+
+
+
+- Template cards in a 3-column grid:
+
+
+
+  · A preview thumbnail area (140px height, background wine-muted,
+
+
+
+    centered section type count label in stone)
+
+
+
+  · Template name: DM Sans SemiBold 14px, charcoal
+
+
+
+  · Description: DM Sans 13px, stone
+
+
+
+  · &apos;Use Template&apos; button: wine, full width, no rounded corners
+
+
+
+- On &apos;Use Template&apos;: load that template&apos;s sections into the store
+
+
+
+  (replace current sections), close the modal
+
+
+
+
+
+
+
+Prompt 5.2 — Dashboard / Home Page
+
+
+
+
+
+
+
+Build the home/dashboard page at /src/app/page.tsx
+
+
+
+
+
+
+
+This is the page a user sees before entering the editor.
+
+
+
+It is NOT a marketing page — it is a minimal dashboard.
+
+
+
+
+
+
+
+DESIGN:
+
+
+
+- Background: var(--color-cream)
+
+
+
+- Top navigation: FORMA wordmark (left), &apos;New Project&apos; button (right)
+
+
+
+- &apos;New Project&apos; button: wine background, white DM Sans 13px, no rounded corners,
+
+
+
+  padding 10px 24px, navigates to /editor
+
+
+
+
+
+
+
+Main area:
+
+
+
+- Page title: &apos;Your Projects&apos; — Cormorant Garamond Bold 34px, charcoal
+
+
+
+- Subtitle: &apos;Start from a template or open an existing project.&apos;
+
+
+
+  DM Sans 15px, stone
+
+
+
+
+
+
+
+Project cards in a 3-column responsive grid:
+
+
+
+- For now, show 3 placeholder project cards (static, no backend yet):
+
+
+
+  &apos;Startup Launch&apos;, &apos;Agency Portfolio&apos;, &apos;Blank Page&apos;
+
+
+
+- Each card:
+
+
+
+  · Height: 180px
+
+
+
+  · Background: var(--color-wine-muted)
+
+
+
+  · A thin top border: 3px solid var(--color-wine)
+
+
+
+  · Project name: Cormorant Garamond Bold 20px, charcoal
+
+
+
+  · Last edited placeholder: DM Sans 12px, stone
+
+
+
+  · On hover: background transitions to white,
+
+
+
+    box-shadow: 0 2px 16px rgba(107, 26, 42, 0.08)
+
+
+
+    transition 220ms ease
+
+
+
+  · Click → navigate to /editor
+
+
+
+
+
+
+
+Skeleton loading state:
+
+
+
+- Show 3 skeleton cards while &apos;loading&apos;:
+
+
+
+  · Animated shimmer in wine-muted tones
+
+
+
+  · Reveal real cards after 800ms with a staggered fade-up
+
+
+
+
+
+
+
+Footer of the dashboard:
+
+
+
+- One line, DM Sans 12px, stone, centered:
+
+
+
+  &apos;FORMA — Built for builders who care about craft.&apos;
+
+
+
+
+
+
+
+◆  STOP — PHASE 5 COMPLETE — Front-end is now complete. Do not add backend yet.  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+PHASE 6
+
+
+
+
+
+Export to HTML/CSS
+
+
+
+This phase is still front-end only. It implements the export feature as a client-side JSON → HTML conversion with no server required.
+
+
+
+
+
+
+
+Prompt 6.1 — Build the HTML Exporter
+
+
+
+
+
+
+
+Build an HTML export utility at /src/utils/exportHTML.ts
+
+
+
+
+
+
+
+exportToHTML(sections: SectionProps[]): string
+
+
+
+
+
+
+
+This function converts the sections JSON to a complete, standalone HTML file.
+
+
+
+
+
+
+
+The output HTML must:
+
+
+
+- Embed all CSS inline in a <style> tag in the <head>
+
+
+
+- Use the FORMA design tokens as CSS variables
+
+
+
+- Load Cormorant Garamond and DM Sans from Google Fonts
+
+
+
+  via a <link> in the <head>
+
+
+
+- Be self-contained — no external JS, no framework dependencies
+
+
+
+
+
+
+
+For each section type, generate semantic, accessible HTML:
+
+
+
+- hero → <section class=&apos;forma-hero&apos;> with <h1> and <a> CTA
+
+
+
+- features → <section class=&apos;forma-features&apos;> with <ul> of feature items
+
+
+
+- testimonials → <section class=&apos;forma-testimonials&apos;> with <blockquote> elements
+
+
+
+- pricing → <section class=&apos;forma-pricing&apos;> with two <div class=&apos;tier&apos;> cards
+
+
+
+- footer → <footer class=&apos;forma-footer&apos;>
+
+
+
+
+
+
+
+Inject each section&apos;s props as the actual content.
+
+
+
+
+
+
+
+The generated HTML should look pixel-close to the builder canvas.
+
+
+
+All colors, fonts, and spacing must match the design system exactly.
+
+
+
+
+
+
+
+Return the full HTML string including <!DOCTYPE html> and <html> wrapper.
+
+
+
+
+
+
+
+Then wire up the &apos;Export&apos; button in the top bar:
+
+
+
+- Call exportToHTML(sections)
+
+
+
+- Create a Blob with type &apos;text/html&apos;
+
+
+
+- Trigger a browser download: &apos;forma-page.html&apos;
+
+
+
+- Show a brief toast notification: &apos;Page exported successfully&apos;
+
+
+
+  The toast appears at the bottom center, auto-dismisses after 3s,
+
+
+
+  background var(--color-charcoal), white text, no rounded corners
+
+
+
+
+
+
+
+Do not build a React export. HTML only.
+
+
+
+
+
+
+
+◆  STOP — PHASE 6 COMPLETE — Test export in browser. Confirm the downloaded HTML is clean.  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+BACKEND PHASES — GATED
+
+
+
+
+
+These Phases Are Intentionally Locked
+
+
+
+The following phases introduce the backend. Do not share these prompts with your AI until you have explicitly decided to begin backend work. Each phase must be commanded individually.
+
+
+
+COMMAND REQUIRED TO UNLOCK
+
+
+
+When you are ready for backend: tell your AI &apos;Begin Phase 7 — Firebase Setup&apos;.
+
+
+
+
+
+
+
+
+
+Phase 7 — Firebase Setup & Project Save (Unlock When Ready)
+
+
+
+Say to your AI: &apos;Begin Phase 7 — Firebase Setup&apos;
+
+
+
+
+
+
+
+Set up Firebase for project persistence.
+
+
+
+
+
+
+
+Install: firebase, react-firebase-hooks
+
+
+
+
+
+
+
+Initialize Firebase at /src/lib/firebase.ts using environment variables:
+
+
+
+NEXT_PUBLIC_FIREBASE_API_KEY, AUTH_DOMAIN, PROJECT_ID,
+
+
+
+STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID
+
+
+
+
+
+
+
+Create a Firestore collection: &apos;projects&apos;
+
+
+
+Each document structure:
+
+
+
+{
+
+
+
+  id: string (auto-generated)
+
+
+
+  title: string
+
+
+
+  sections: SectionProps[]
+
+
+
+  createdAt: Timestamp
+
+
+
+  updatedAt: Timestamp
+
+
+
+  userId: string
+
+
+
+}
+
+
+
+
+
+
+
+Build these three utility functions in /src/lib/db.ts:
+
+
+
+- saveProject(userId, title, sections): Promise<string> — returns doc ID
+
+
+
+- loadProject(projectId): Promise<ProjectDoc>
+
+
+
+- listProjects(userId): Promise<ProjectDoc[]>
+
+
+
+
+
+
+
+Wire up the &apos;Save&apos; button in the top bar (add it now if not there):
+
+
+
+- On save: write to Firestore, show toast &apos;Project saved&apos;
+
+
+
+- Auto-save every 60 seconds if the page has unsaved changes
+
+
+
+- Track unsaved state with a small dot indicator next to the page title
+
+
+
+
+
+
+
+
+
+Phase 8 — Authentication (Unlock When Ready)
+
+
+
+Say to your AI: &apos;Begin Phase 8 — Authentication&apos;
+
+
+
+
+
+
+
+Add Firebase Authentication to FORMA.
+
+
+
+
+
+
+
+Auth method: Google Sign-In only (no email/password for now)
+
+
+
+
+
+
+
+Build an AuthGate component that:
+
+
+
+- Wraps the dashboard and editor routes
+
+
+
+- Redirects unauthenticated users to /login
+
+
+
+
+
+
+
+Build /src/app/login/page.tsx:
+
+
+
+- Minimal, centered layout on cream background
+
+
+
+- FORMA wordmark (large, wine) centered
+
+
+
+- &apos;Continue with Google&apos; button:
+
+
+
+  · White background, charcoal border 1px, DM Sans 14px
+
+
+
+  · Google icon (SVG, inline) at left
+
+
+
+  · No rounded corners
+
+
+
+  · Hover: background wine-muted
+
+
+
+- On success: redirect to /
+
+
+
+
+
+
+
+Store user state in a context provider at /src/context/AuthContext.tsx
+
+
+
+Expose: user, loading, signIn(), signOut()
+
+
+
+
+
+
+
+Update the dashboard to:
+
+
+
+- Load only the authenticated user&apos;s projects from Firestore
+
+
+
+- Show a &apos;Sign Out&apos; button in the top nav
+
+
+
+- Show the user&apos;s display name next to the sign-out button
+
+
+
+
+
+
+
+
+
+Phase 9 — AI Section Generator (Unlock When Ready)
+
+
+
+Say to your AI: &apos;Begin Phase 9 — AI Generator&apos;
+
+
+
+
+
+
+
+Add an AI-powered section generator to FORMA.
+
+
+
+
+
+
+
+Add an &apos;AI Generate&apos; button to the Toolbar (Sparkles icon from Lucide).
+
+
+
+
+
+
+
+On click: open a modal prompt input:
+
+
+
+- Title: &apos;Describe your page&apos;
+
+
+
+  Cormorant Garamond Bold 28px, charcoal
+
+
+
+- Textarea: DM Sans 14px, min-height 80px,
+
+
+
+  border 1px solid var(--color-divider),
+
+
+
+  focus border var(--color-wine), no box-shadow, no rounded corners
+
+
+
+  Placeholder: &apos;e.g. A landing page for a luxury skincare brand in Lagos.&apos;
+
+
+
+- &apos;Generate&apos; button: wine, DM Sans 13px, no rounded corners
+
+
+
+
+
+
+
+Build an API route at /src/app/api/generate/route.ts
+
+
+
+
+
+
+
+The route calls the Anthropic Claude API (claude-sonnet-4-20250514):
+
+
+
+System prompt:
+
+
+
+  &apos;You are a landing page architect for FORMA. Given a product description,
+
+
+
+   return a JSON array of sections. Each section must have: id (use uuid),
+
+
+
+   type (hero|features|testimonials|pricing|footer), order, and props.
+
+
+
+   The copy must be specific to the described product, not generic.
+
+
+
+   Return only valid JSON. No markdown, no explanation.&apos;
+
+
+
+
+
+
+
+User prompt: the text the user typed
+
+
+
+
+
+
+
+On success:
+
+
+
+- Parse the returned JSON
+
+
+
+- Load the sections into the Zustand store (replacing current)
+
+
+
+- Close the modal, show toast: &apos;Page generated. Review and refine.&apos;
+
+
+
+
+
+
+
+While generating: show a skeleton shimmer on the canvas
+
+
+
+On error: show toast: &apos;Generation failed. Try again.&apos; in wine background.
+
+
+
+
+
+
+
+Store the API key as ANTHROPIC_API_KEY in .env.local — never expose it.
+
+
+
+
+
+
+
+
+
+Phase 10 — Publish to Live URL (Unlock When Ready)
+
+
+
+Say to your AI: &apos;Begin Phase 10 — Publish&apos;
+
+
+
+
+
+
+
+Add a &apos;Publish&apos; feature to FORMA.
+
+
+
+
+
+
+
+When a user clicks &apos;Publish&apos; in the top bar:
+
+
+
+1. Call exportToHTML(sections) to generate the HTML string
+
+
+
+2. Upload it to Firebase Storage at:
+
+
+
+   /pages/{userId}/{projectId}/index.html
+
+
+
+3. Set the file&apos;s Cache-Control to: public, max-age=3600
+
+
+
+4. Get the download URL from Firebase Storage
+
+
+
+5. Save the URL to the project&apos;s Firestore document as &apos;publishedUrl&apos;
+
+
+
+6. Show a modal with:
+
+
+
+   - Title: &apos;Your page is live&apos;
+
+
+
+   - The live URL as a clickable link
+
+
+
+   - A &apos;Copy URL&apos; button (copies to clipboard, shows &apos;Copied!&apos; for 2s)
+
+
+
+   - An &apos;Open Page&apos; button (opens in new tab)
+
+
+
+
+
+
+
+In the top bar, if a project has a publishedUrl:
+
+
+
+- Show a small green dot next to the &apos;Publish&apos; button
+
+
+
+- Tooltip on hover: &apos;Last published: [date]&apos;
+
+
+
+
+
+
+
+Re-publishing overwrites the existing file.
+
+
+
+
+
+
+
+◆  STOP — ALL PHASES COMPLETE — Review the full product before any polish pass  ◆
+
+
+
+Do not proceed. Wait for a user command before continuing to the next phase.
+
+
+
+
+
+BONUS
+
+
+
+
+
+Polish & Quality Check Prompts
+
+
+
+Use these prompts after all phases are done to audit and elevate the product.
+
+
+
+
+
+
+
+Prompt P.1 — Design Audit
+
+
+
+Audit the entire FORMA UI for design consistency.
+
+
+
+Check and fix the following:
+
+
+
+
+
+
+
+1. Every button must use border-radius: 2px — no pill shapes, no full radius
+
+
+
+2. No font other than Cormorant Garamond, DM Sans, or JetBrains Mono
+
+
+
+   should appear anywhere in the UI
+
+
+
+3. No purple, blue, or green should appear anywhere — report any violations
+
+
+
+4. All focus states must use outline: 2px solid var(--color-wine)
+
+
+
+   with outline-offset: 2px — replace any default browser focus rings
+
+
+
+5. Every interactive element must have a cursor: pointer
+
+
+
+6. The Sidebar must not show a scrollbar unless content overflows —
+
+
+
+   use a styled scrollbar: 4px, wine color, rounded thumb
+
+
+
+7. Verify all text is readable at WCAG AA contrast ratio
+
+
+
+8. Remove any animation not listed in the FORMA permitted animation list
+
+
+
+
+
+
+
+Report all violations found, fix them, and confirm when done.
+
+
+
+
+
+
+
+Prompt P.2 — Performance & Accessibility
+
+
+
+Audit FORMA for performance and accessibility.
+
+
+
+
+
+
+
+Accessibility:
+
+
+
+- All icon-only buttons must have aria-label attributes
+
+
+
+- All form inputs must have associated <label> elements
+
+
+
+- The canvas sections must have role=&apos;region&apos; and aria-label
+
+
+
+- Drag handles must have aria-roledescription=&apos;drag handle&apos;
+
+
+
+- Color contrast must meet WCAG AA for all text
+
+
+
+
+
+
+
+Performance:
+
+
+
+- Wrap all section components in React.memo
+
+
+
+- The Zustand store selectors must use shallow equality where arrays are selected
+
+
+
+- Heavy components (TemplateGallery modal, Sidebar) should be lazily loaded
+
+
+
+  using next/dynamic
+
+
+
+- Verify no layout thrashing occurs when the Sidebar slides in
+
+
+
+
+
+
+
+Fix all issues found. Do not change any visual design while fixing.
+
+
+
+
+
+
+
+Prompt P.3 — Final Responsiveness Pass
+
+
+
+Make FORMA fully responsive for tablets (768px) and large screens (1440px+).
+
+
+
+
+
+
+
+Editor layout on tablet (768px–1023px):
+
+
+
+- The Sidebar should become a bottom sheet instead of a side panel
+
+
+
+- The Toolbar should move to the top as a horizontal icon bar
+
+
+
+- The Canvas should take full width
+
+
+
+
+
+
+
+Editor layout on desktop (1024px+):
+
+
+
+- Current 3-column layout (Toolbar / Canvas / Sidebar) stays as designed
+
+
+
+
+
+
+
+Dashboard on mobile (< 768px):
+
+
+
+- Project cards become single column
+
+
+
+- Top nav collapses: FORMA wordmark stays, &apos;New Project&apos; becomes a + button
+
+
+
+
+
+
+
+All section components:
+
+
+
+- Hero: font scales to 44px on tablet, 32px on mobile
+
+
+
+- Features: 2 columns on tablet, 1 column on mobile
+
+
+
+- Pricing: stacked vertically on tablet and mobile
+
+
+
+- Testimonials: 2 columns on tablet, 1 on mobile
+
+
+
+
+
+
+
+Do not use any UI framework for responsive layout.
+
+
+
+Use only Tailwind responsive prefixes (sm:, md:, lg:).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+◆
+
+
+
+Build with intention. Ship with confidence.
+
+
+
+
+
+
+
+FORMA — Brillo Digitals
+
+
+
+
+

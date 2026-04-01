@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-wine: #6B1A2A;
+  --color-wine-light: #8C2236;
+  --color-wine-muted: #F5EEF0;
+  --color-cream: #FDFAF8;
+  --color-charcoal: #2A2228;
+  --color-stone: #7A6E72;
+  --color-gold: #C49A4A;
+  --color-divider: #E8DDE0;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --space-4xl: 128px;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  /* The layout.tsx will handle font-family via Next.js fonts */
+}
