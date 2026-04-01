@@ -13,6 +13,7 @@ type BuilderStore = PageState & {
   redo: () => void;
   setDragging: (isDragging: boolean) => void;
   loadTemplate: (sections: SectionProps[]) => void;
+  markSaved: () => void;
 };
 
 const MAX_HISTORY = 30;
@@ -46,6 +47,7 @@ export const useBuilderStore = create<BuilderStore>()(
     isDragging: false,
     history: [[DEFAULT_PAGE]],
     historyIndex: 0,
+    lastSavedHistoryIndex: 0,
 
     setDragging: (isDragging) => set((state) => { state.isDragging = isDragging; }),
 
@@ -108,6 +110,10 @@ export const useBuilderStore = create<BuilderStore>()(
       state.sections = newSections;
       state.selectedId = null;
       saveHistory(state);
+    }),
+
+    markSaved: () => set((state) => {
+      state.lastSavedHistoryIndex = state.historyIndex;
     }),
   }))
 );

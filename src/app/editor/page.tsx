@@ -9,18 +9,46 @@ import { useBuilderStore } from "@/store/builderStore";
 import { AnimatePresence, motion } from "framer-motion";
 import TemplateGallery from "@/components/editor/TemplateGallery";
 import { exportToHTML } from "@/utils/exportHTML";
+import { saveProject } from "@/lib/db";
+import { useEffect, useRef } from "react";
 
 export default function EditorPage() {
-  console.log("Canvas:", Canvas);
-  console.log("Toolbar:", Toolbar);
-  console.log("Sidebar:", Sidebar);
-  console.log("TemplateGallery:", TemplateGallery);
-  console.log("Undo2:", Undo2, "Redo2:", Redo2, "Monitor:", Monitor, "Smartphone:", Smartphone, "LayoutTemplate:", LayoutTemplate);
-  
-  const { sections, undo, redo, historyIndex, history, selectedId } = useBuilderStore();
+  const { sections, undo, redo, historyIndex, history, selectedId, lastSavedHistoryIndex, markSaved } = useBuilderStore();
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
   const [showTemplates, setShowTemplates] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [projectId, setProjectId] = useState<string | null>(null);
+  // Optional: you can extract this to store if title editing is needed
+  const [pageTitle, setPageTitle] = useState("Untitled Page");
+
+  const isUnsaved = historyIndex !== lastSavedHistoryIndex;
+  
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleSave = async () => {
+    try {
+      const newProjectId = await saveProject("anonymous_user", pageTitle, sections, projectId);
+      setProjectId(newProjectId);
+      markSaved();
+      showToast("Project saved");
+    } catch (error) {
+      console.error(error);
+      showToast("Save failed");
+    }
+  };
+
+  // Auto-save every 60 seconds if unsaved
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isUnsaved) {
+        handleSave();
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [isUnsaved, sections, pageTitle, projectId]);
 
   const handleExport = () => {
     const html = exportToHTML(sections);
@@ -34,8 +62,7 @@ export default function EditorPage() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    showToast("Page exported successfully");
   };
 
   return (
@@ -48,12 +75,16 @@ export default function EditorPage() {
         </div>
 
         {/* Center */}
-        <div>
+        <div className="flex items-center gap-2">
           <input
             type="text"
-            defaultValue="Untitled Page"
+            value={pageTitle}
+            onChange={(e) => setPageTitle(e.target.value)}
             className="font-sans text-[14px] text-charcoal bg-transparent outline-none text-center hover:bg-black/5 focus:bg-white focus:border-wine px-2 py-1 rounded transition-colors w-[200px]"
           />
+          {isUnsaved && (
+            <div className="w-2 h-2 rounded-full bg-stone" title="Unsaved changes" />
+          )}
         </div>
 
         {/* Right */}
@@ -97,6 +128,12 @@ export default function EditorPage() {
               <LayoutTemplate size={14} /> Templates
             </button>
 
+            <button 
+              onClick={handleSave} 
+              className="font-sans text-[13px] text-charcoal border border-charcoal px-4 py-1.5 rounded-[2px] hover:bg-charcoal hover:text-white transition-colors"
+            >
+              Save
+            </button>
             <button className="font-sans text-[13px] text-charcoal border border-charcoal px-4 py-1.5 rounded-[2px] hover:bg-charcoal hover:text-white transition-colors">
               Preview
             </button>
@@ -148,14 +185,14 @@ export default function EditorPage() {
       {showTemplates && <TemplateGallery onClose={() => setShowTemplates(false)} />}
       
       <AnimatePresence>
-        {showToast && (
+        {toastMessage && (
           <motion.div 
             initial={{ y: 50, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             exit={{ y: 50, opacity: 0 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-charcoal text-white font-sans text-[13px] px-6 py-3 shadow-lg z-50 rounded-[2px]"
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 text-white font-sans text-[13px] px-6 py-3 shadow-lg z-50 rounded-[2px] ${toastMessage.includes('failed') ? 'bg-red-500' : 'bg-charcoal'}`}
           >
-            Page exported successfully
+            {toastMessage}
           </motion.div>
         )}
       </AnimatePresence>

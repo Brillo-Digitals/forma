@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   description: "Complete AI Build Prompt & Design System",
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,8 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${cormorant.variable} ${jetbrains.variable} font-sans`}>
-        {children}
+      <body className={`${dmSans.variable} ${cormorant.variable} ${jetbrains.variable} antialiased`}>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

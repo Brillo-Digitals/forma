@@ -13,6 +13,7 @@ export interface PageState {
   isDragging: boolean;
   history: SectionProps[][];
   historyIndex: number;
+  lastSavedHistoryIndex: number;
 }
 
 export const DEFAULT_PAGE: SectionProps = {
