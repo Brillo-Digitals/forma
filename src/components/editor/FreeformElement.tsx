@@ -1,13 +1,15 @@
 "use client";
 
-import React, { memo, useRef, useEffect, useCallback } from "react";
+import React, { memo, useRef, useEffect, useCallback, useMemo } from "react";
 import { FreeformElement as FreeformElementType, ElementStyle } from "@/types";
 import { useBuilderStore } from "@/store/builderStore";
 import LinkWrapper from "./LinkWrapper";
+import { AlignmentGuide } from "./FreeformLayer";
 
 const SNAP = 10;
 const MIN_W = 50;
 const MIN_H = 30;
+const ALIGN_THRESHOLD = 4;
 
 type Handle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 
@@ -26,20 +28,134 @@ interface Props {
   el: FreeformElementType;
   sectionId: string;
   containerRef: React.RefObject<HTMLDivElement | null>;
+  allElements: FreeformElementType[];
+  onGuidesChange: (guides: AlignmentGuide[]) => void;
 }
 
-function FreeformElementComponent({ el, sectionId, containerRef }: Props) {
+function FreeformElementComponent({ el, sectionId, containerRef, allElements, onGuidesChange }: Props) {
   const { selectedElementId, selectedSectionForElement, currentViewport, updateElement, selectElement } = useBuilderStore();
   const isSelected = selectedElementId === el.id && selectedSectionForElement === sectionId;
 
   const viewport = currentViewport || "desktop";
-  const baseStyle = el.style.desktop;
-  const vpOverride = viewport !== "desktop" ? (el.style[viewport] || {}) : {};
-  const s: ElementStyle = { ...baseStyle, ...vpOverride };
+  const s: ElementStyle = useMemo(() => {
+    const baseStyle = el.style.desktop;
+    const vpOverride = viewport !== "desktop" ? (el.style[viewport] || {}) : {};
+    return { ...baseStyle, ...vpOverride };
+  }, [el.style, viewport]);
 
   const elRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ startX: number; startY: number; initTop: number; initLeft: number; active: boolean } | null>(null);
   const resizeRef = useRef<{ startX: number; startY: number; initW: number; initH: number; initTop: number; initLeft: number; handle: Handle; active: boolean } | null>(null);
+
+  const getComputedElementStyle = useCallback((item: FreeformElementType): ElementStyle => {
+    const base = item.style.desktop;
+    const override = viewport !== "desktop" ? (item.style[viewport] || {}) : {};
+    return { ...base, ...override };
+  }, [viewport]);
+
+  const maybeAlignValue = useCallback((current: number, target: number) => {
+    return Math.abs(current - target) <= ALIGN_THRESHOLD ? target : current;
+  }, []);
+
+  const computeDragAlignment = useCallback((nextLeft: number, nextTop: number, cW: number, cH: number) => {
+    let alignedLeft = nextLeft;
+    let alignedTop = nextTop;
+    const guides: AlignmentGuide[] = [];
+
+    const width = s.width;
+    const height = s.height;
+
+    const pushGuide = (axis: "x" | "y", position: number) => {
+      if (!guides.some((g) => g.axis === axis && Math.abs(g.position - position) < 0.5)) {
+        guides.push({ axis, position });
+      }
+    };
+
+    const containerCenterX = cW / 2;
+    const containerCenterY = cH / 2;
+    const centerX = alignedLeft + width / 2;
+    const centerY = alignedTop + height / 2;
+
+    if (Math.abs(centerX - containerCenterX) <= ALIGN_THRESHOLD) {
+      alignedLeft = containerCenterX - width / 2;
+      pushGuide("x", containerCenterX);
+    }
+    if (Math.abs(centerY - containerCenterY) <= ALIGN_THRESHOLD) {
+      alignedTop = containerCenterY - height / 2;
+      pushGuide("y", containerCenterY);
+    }
+
+    allElements.forEach((other) => {
+      if (other.id === el.id) return;
+
+      const os = getComputedElementStyle(other);
+      const otherLeft = os.left;
+      const otherRight = os.left + os.width;
+      const otherCenterX = os.left + os.width / 2;
+      const otherTop = os.top;
+      const otherBottom = os.top + os.height;
+      const otherCenterY = os.top + os.height / 2;
+
+      const nextRight = alignedLeft + width;
+      const nextCenterX = alignedLeft + width / 2;
+      const nextBottom = alignedTop + height;
+      const nextCenterY = alignedTop + height / 2;
+
+      const candidateLeft = maybeAlignValue(alignedLeft, otherLeft);
+      if (candidateLeft !== alignedLeft) {
+        alignedLeft = candidateLeft;
+        pushGuide("x", otherLeft);
+      }
+
+      const candidateRight = maybeAlignValue(nextRight, otherRight);
+      if (candidateRight !== nextRight) {
+        alignedLeft = otherRight - width;
+        pushGuide("x", otherRight);
+      }
+
+      const candidateCenterX = maybeAlignValue(nextCenterX, otherCenterX);
+      if (candidateCenterX !== nextCenterX) {
+        alignedLeft = otherCenterX - width / 2;
+        pushGuide("x", otherCenterX);
+      }
+
+      const candidateTop = maybeAlignValue(alignedTop, otherTop);
+      if (candidateTop !== alignedTop) {
+        alignedTop = candidateTop;
+        pushGuide("y", otherTop);
+      }
+
+      const candidateBottom = maybeAlignValue(nextBottom, otherBottom);
+      if (candidateBottom !== nextBottom) {
+        alignedTop = otherBottom - height;
+        pushGuide("y", otherBottom);
+      }
+
+      const candidateCenterY = maybeAlignValue(nextCenterY, otherCenterY);
+      if (candidateCenterY !== nextCenterY) {
+        alignedTop = otherCenterY - height / 2;
+        pushGuide("y", otherCenterY);
+      }
+    });
+
+    return { left: alignedLeft, top: alignedTop, guides };
+  }, [allElements, el.id, getComputedElementStyle, maybeAlignValue, s.height, s.width]);
+
+  const snapResizeHeightToPeers = useCallback((nextHeight: number) => {
+    let snapped = nextHeight;
+    const guides: AlignmentGuide[] = [];
+
+    allElements.forEach((other) => {
+      if (other.id === el.id) return;
+      const os = getComputedElementStyle(other);
+      if (Math.abs(snapped - os.height) <= ALIGN_THRESHOLD) {
+        snapped = os.height;
+        guides.push({ axis: "y", position: s.top + snapped });
+      }
+    });
+
+    return { height: snapped, guides };
+  }, [allElements, el.id, getComputedElementStyle, s.top]);
 
   const commitPosition = useCallback(() => {
     if (!elRef.current) return;
@@ -64,6 +180,12 @@ function FreeformElementComponent({ el, sectionId, containerRef }: Props) {
         let ny = Math.round((dragRef.current.initTop  + dy) / SNAP) * SNAP;
         nx = Math.max(0, Math.min(nx, cW - s.width));
         ny = Math.max(0, Math.min(ny, cH - s.height));
+
+        const aligned = computeDragAlignment(nx, ny, cW, cH);
+        nx = Math.max(0, Math.min(aligned.left, cW - s.width));
+        ny = Math.max(0, Math.min(aligned.top, cH - s.height));
+
+        onGuidesChange(aligned.guides);
         elRef.current.style.left = `${nx}px`;
         elRef.current.style.top  = `${ny}px`;
       }
@@ -77,6 +199,15 @@ function FreeformElementComponent({ el, sectionId, containerRef }: Props) {
         if (r.handle.includes("s")) nH = r.initH + dy;
         if (r.handle.includes("n")) { nH = r.initH - dy; nT = r.initTop + dy; }
         nW = Math.max(MIN_W, nW); nH = Math.max(MIN_H, nH);
+
+        const snappedHeight = snapResizeHeightToPeers(nH);
+        nH = snappedHeight.height;
+
+        const resizeGuides: AlignmentGuide[] = [...snappedHeight.guides];
+        resizeGuides.push({ axis: "x", position: nL });
+        resizeGuides.push({ axis: "y", position: nT });
+        onGuidesChange(resizeGuides);
+
         elRef.current.style.width  = `${nW}px`;
         elRef.current.style.height = `${nH}px`;
         elRef.current.style.left   = `${nL}px`;
@@ -87,22 +218,25 @@ function FreeformElementComponent({ el, sectionId, containerRef }: Props) {
       if (dragRef.current?.active || resizeRef.current?.active) { commitPosition(); }
       dragRef.current = null;
       resizeRef.current = null;
+      onGuidesChange([]);
     };
     document.addEventListener("mousemove", onMove);
     document.addEventListener("mouseup", onUp);
     return () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
-  }, [commitPosition, s.width, s.height]);
+  }, [commitPosition, computeDragAlignment, onGuidesChange, s.width, s.height, snapResizeHeightToPeers, containerRef]);
 
   const onDragStart = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).dataset.handle) return;
     e.preventDefault(); e.stopPropagation();
     selectElement(sectionId, el.id);
     dragRef.current = { startX: e.clientX, startY: e.clientY, initTop: s.top, initLeft: s.left, active: true };
+    onGuidesChange([]);
   };
 
   const onResizeStart = (e: React.MouseEvent, handle: Handle) => {
     e.preventDefault(); e.stopPropagation();
     resizeRef.current = { startX: e.clientX, startY: e.clientY, initW: s.width, initH: s.height, initTop: s.top, initLeft: s.left, handle, active: true };
+    onGuidesChange([]);
   };
 
   const renderContent = () => {

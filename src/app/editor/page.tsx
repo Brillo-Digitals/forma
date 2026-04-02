@@ -18,7 +18,21 @@ import PublishModal from "@/components/editor/PublishModal";
 import EditorDndProvider from "@/components/editor/EditorDndProvider";
 
 export default function EditorPage() {
-  const { sections, undo, redo, historyIndex, history, selectedId, selectedElementId, currentViewport, setViewport, lastSavedHistoryIndex, markSaved } = useBuilderStore();
+  const {
+    sections,
+    undo,
+    redo,
+    historyIndex,
+    history,
+    selectedId,
+    selectedElementId,
+    selectedSectionForElement,
+    deleteElement,
+    currentViewport,
+    setViewport,
+    lastSavedHistoryIndex,
+    markSaved,
+  } = useBuilderStore();
   const { user } = useAuth();
   
   const [showTemplates, setShowTemplates] = useState(false);
@@ -57,6 +71,33 @@ export default function EditorPage() {
     }, 60000);
     return () => clearInterval(interval);
   }, [isUnsaved, sections, pageTitle, projectId]);
+
+  // Delete currently selected element via keyboard.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedElementId || !selectedSectionForElement) return;
+      if (e.key !== "Delete" && e.key !== "Backspace") return;
+
+      const target = e.target as HTMLElement | null;
+      const isTypingTarget = Boolean(
+        target && (
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable
+        )
+      );
+
+      if (isTypingTarget) return;
+
+      e.preventDefault();
+      deleteElement(selectedSectionForElement, selectedElementId);
+      showToast("Element deleted");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [deleteElement, selectedElementId, selectedSectionForElement]);
 
   const handleExport = () => {
     const html = exportToHTML(sections);

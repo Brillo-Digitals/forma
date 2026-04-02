@@ -15,6 +15,7 @@ type BuilderStore = PageState & {
   selectSection: (id: string | null) => void;
   updateSectionProp: (id: string, key: string, value: any) => void;
   updateSectionStyle: (id: string, key: keyof SectionStyle, value: any, viewport?: ViewportType) => void;
+  convertSectionToFreeformContent: (id: string) => void;
   reorderSections: (newOrder: SectionProps[]) => void;
   loadTemplate: (sections: SectionProps[]) => void;
   markSaved: () => void;
@@ -38,13 +39,13 @@ const MAX_HISTORY = 50;
 
 const getDefaultProps = (type: SectionType): Record<string, any> => {
   switch (type) {
-    case 'hero':         return { headline: 'New Hero', subheadline: 'Add your text here', ctaText: 'Click Me', bgColor: 'var(--color-cream)' };
+    case 'hero':         return { headline: 'New Hero', subheadline: 'Add your text here', ctaText: 'Click Me' };
     case 'features':     return { title: 'Our Features', label: 'FEATURES', features: [] };
     case 'testimonials': return { label: 'TESTIMONIALS', testimonials: [] };
     case 'pricing':      return { title: 'Simple Pricing', tiers: [] };
     case 'footer':       return { brandName: 'YOUR BRAND', tagline: 'Built with FORMA.' };
     case 'logobar':      return { label: 'TRUSTED BY', logos: ['Acme Corp', 'Initech', 'Hooli', 'Pied Piper', 'Globex'] };
-    case 'cta':          return { headline: 'Ready to get started?', subheadline: 'Join thousands of teams already using the platform.', ctaText: 'Start Free Trial', ctaHref: '#', bgColor: 'var(--color-charcoal)' };
+    case 'cta':          return { headline: 'Ready to get started?', subheadline: 'Join thousands of teams already using the platform.', ctaText: 'Start Free Trial', ctaHref: '#' };
     case 'faq':          return { headline: 'Frequently asked questions', faqs: [
       { question: 'How do I get started?', answer: 'Sign up and create your first project in under 2 minutes.' },
       { question: 'Is there a free plan?', answer: 'Yes — our Starter plan is free forever with up to 3 projects.' },
@@ -53,6 +54,15 @@ const getDefaultProps = (type: SectionType): Record<string, any> => {
     default: return {};
   }
 };
+
+const getDefaultSectionStyle = (type: SectionType) => ({
+  desktop: {
+    backgroundColor: type === 'cta' ? '#2A2A2A' : '#FDFAF8',
+    minHeight: type === 'footer' ? 300 : 600,
+    paddingTop: 96,
+    paddingBottom: 96,
+  }
+});
 
 const getDefaultElementStyle = (type: ElementType): ElementStyle => {
   switch (type) {
@@ -63,6 +73,153 @@ const getDefaultElementStyle = (type: ElementType): ElementStyle => {
     default:          return { top: 80, left: 80, width: 200, height: 60, zIndex: 1 };
   }
 };
+
+function createTextElement(content: string, top: number, left: number, width: number, height: number, extras: Partial<ElementStyle> = {}): FreeformElement {
+  return {
+    id: `el-${generateId()}`,
+    type: 'text',
+    content,
+    style: {
+      desktop: {
+        ...getDefaultElementStyle('text'),
+        top,
+        left,
+        width,
+        height,
+        ...extras,
+      },
+    },
+  };
+}
+
+function createButtonElement(content: string, top: number, left: number, width: number, height: number, href?: string): FreeformElement {
+  return {
+    id: `el-${generateId()}`,
+    type: 'button',
+    content,
+    link: {
+      type: 'url',
+      value: href || '#',
+      openInNewTab: false,
+      underline: false,
+      color: '',
+      hoverColor: '',
+      hoverUnderline: false,
+    },
+    style: {
+      desktop: {
+        ...getDefaultElementStyle('button'),
+        top,
+        left,
+        width,
+        height,
+      },
+    },
+  };
+}
+
+function createImageElement(src: string, top: number, left: number, width: number, height: number): FreeformElement {
+  return {
+    id: `el-${generateId()}`,
+    type: 'image',
+    src,
+    style: {
+      desktop: {
+        ...getDefaultElementStyle('image'),
+        top,
+        left,
+        width,
+        height,
+      },
+    },
+  };
+}
+
+function buildSectionContentElements(section: SectionProps): FreeformElement[] {
+  const p = (section.props || {}) as Record<string, unknown>;
+  const elements: FreeformElement[] = [];
+
+  const str = (value: unknown): string => (typeof value === 'string' ? value : '');
+
+  if (p.bgImage && typeof p.bgImage === 'string') {
+    elements.push(createImageElement(p.bgImage, 0, 0, 1200, 600));
+  }
+
+  switch (section.type) {
+    case 'hero': {
+      elements.push(createTextElement((p.headline as string) || 'Build Pages That Convert', 140, 240, 720, 120, { fontSize: 72, fontWeight: '700', textAlign: 'center', lineHeight: '1.1' }));
+      elements.push(createTextElement((p.subheadline as string) || 'A refined, powerful landing page builder for serious products.', 290, 330, 540, 90, { fontSize: 20, textAlign: 'center', color: '#6F6464' }));
+      elements.push(createButtonElement((p.ctaText as string) || 'Start Building', 390, 510, 180, 50, p.ctaHref as string));
+      break;
+    }
+    case 'cta': {
+      elements.push(createTextElement((p.headline as string) || 'Start building today.', 150, 220, 760, 120, { fontSize: 56, fontWeight: '700', textAlign: 'center', color: '#FFFFFF', lineHeight: '1.1' }));
+      elements.push(createTextElement((p.subheadline as string) || 'Join thousands of teams already shipping better landing pages.', 290, 300, 600, 80, { fontSize: 18, textAlign: 'center', color: 'rgba(255,255,255,0.7)' }));
+      elements.push(createButtonElement((p.ctaText as string) || 'Get Started Free', 390, 510, 180, 50, p.ctaHref as string));
+      break;
+    }
+    case 'features': {
+      const items = Array.isArray(p.features) ? (p.features as Array<Record<string, unknown>>) : [];
+      elements.push(createTextElement((p.label as string) || (p.subtitle as string) || 'WHY FORMA', 80, 490, 220, 24, { fontSize: 12, fontWeight: '500', textAlign: 'center' }));
+      elements.push(createTextElement((p.title as string) || 'Design Without Compromise', 120, 300, 600, 80, { fontSize: 48, fontWeight: '700', textAlign: 'center' }));
+      items.slice(0, 3).forEach((f, i: number) => {
+        const colLeft = 100 + i * 340;
+        elements.push(createTextElement(str(f?.title) || `Feature ${i + 1}`, 260, colLeft, 280, 44, { fontSize: 22, fontWeight: '600' }));
+        elements.push(createTextElement(str(f?.description) || 'Describe this feature.', 310, colLeft, 280, 80, { fontSize: 15, color: '#6F6464' }));
+      });
+      break;
+    }
+    case 'testimonials': {
+      const items = Array.isArray(p.testimonials) ? (p.testimonials as Array<Record<string, unknown>>) : [];
+      elements.push(createTextElement((p.label as string) || (p.title as string) || 'WHAT THEY SAY', 80, 470, 260, 24, { fontSize: 12, fontWeight: '500', textAlign: 'center' }));
+      items.slice(0, 3).forEach((t, i: number) => {
+        const colLeft = 90 + i * 350;
+        elements.push(createTextElement(str(t?.quote) || 'Great product.', 180, colLeft, 300, 150, { fontSize: 24, fontWeight: '400', lineHeight: '1.5' }));
+        elements.push(createTextElement(str(t?.authorName) || str(t?.author) || 'Author Name', 340, colLeft, 300, 30, { fontSize: 13, fontWeight: '600' }));
+        elements.push(createTextElement(str(t?.authorRole), 370, colLeft, 300, 28, { fontSize: 13, color: '#6F6464' }));
+      });
+      break;
+    }
+    case 'pricing': {
+      const tiers = Array.isArray(p.tiers) ? (p.tiers as Array<Record<string, unknown>>) : [];
+      elements.push(createTextElement((p.title as string) || 'Simple, Transparent Pricing', 80, 250, 700, 80, { fontSize: 48, fontWeight: '700', textAlign: 'center', color: '#FFFFFF' }));
+      tiers.slice(0, 3).forEach((tier, i: number) => {
+        const colLeft = 120 + i * 320;
+        elements.push(createTextElement(str(tier?.name) || `Plan ${i + 1}`, 220, colLeft, 250, 40, { fontSize: 24, fontWeight: '600', color: '#FFFFFF' }));
+        elements.push(createTextElement(str(tier?.price) || '$0/mo', 270, colLeft, 250, 44, { fontSize: 36, fontWeight: '700', color: '#FFFFFF' }));
+        elements.push(createButtonElement(str(tier?.ctaText) || str(tier?.buttonText) || 'Select Plan', 410, colLeft, 220, 48, str(tier?.ctaHref) || '#'));
+      });
+      break;
+    }
+    case 'faq': {
+      const faqs = Array.isArray(p.faqs) ? (p.faqs as Array<Record<string, unknown>>) : [];
+      elements.push(createTextElement((p.headline as string) || 'Frequently asked questions', 80, 220, 760, 70, { fontSize: 44, fontWeight: '700' }));
+      faqs.slice(0, 4).forEach((faq, i: number) => {
+        const top = 190 + i * 100;
+        elements.push(createTextElement(str(faq?.question) || `Question ${i + 1}`, top, 220, 760, 40, { fontSize: 24, fontWeight: '600' }));
+        elements.push(createTextElement(str(faq?.answer) || 'Answer text', top + 42, 220, 760, 50, { fontSize: 15, color: '#6F6464' }));
+      });
+      break;
+    }
+    case 'logobar': {
+      const logos = Array.isArray(p.logos) ? p.logos : [];
+      elements.push(createTextElement((p.label as string) || 'TRUSTED BY TEAMS AT', 70, 420, 360, 24, { fontSize: 12, textAlign: 'center' }));
+      logos.slice(0, 6).forEach((logo: string, i: number) => {
+        elements.push(createTextElement(logo, 140, 90 + i * 180, 160, 30, { fontSize: 20, fontWeight: '700', color: '#2A2A2A' }));
+      });
+      break;
+    }
+    case 'footer': {
+      elements.push(createTextElement((p.brandName as string) || (p.companyName as string) || 'FORMA', 120, 90, 360, 44, { fontSize: 30, fontWeight: '700', color: '#FFFFFF' }));
+      elements.push(createTextElement((p.tagline as string) || 'Built with FORMA.', 125, 780, 320, 36, { fontSize: 14, color: 'rgba(255,255,255,0.65)' }));
+      break;
+    }
+    default:
+      break;
+  }
+
+  return elements;
+}
 
 function saveHistory(state: any) {
   let newHistory = state.history.slice(0, state.historyIndex + 1);
@@ -119,6 +276,7 @@ export const useBuilderStore = create<BuilderStore>()(
         id: generateId(),
         type,
         props: getDefaultProps(type),
+        style: getDefaultSectionStyle(type),
         order: state.sections.length,
         elements: [],
       };
@@ -175,6 +333,23 @@ export const useBuilderStore = create<BuilderStore>()(
       if (!section.style) section.style = {};
       if (!section.style[viewport]) section.style[viewport] = {};
       (section.style[viewport] as any)[key] = value;
+      saveHistory(state);
+    }),
+
+    convertSectionToFreeformContent: (id) => set((state) => {
+      const section = findSection(state, id);
+      if (!section) return;
+
+      section.elements = buildSectionContentElements(section);
+      section.props = {
+        ...section.props,
+        freeformContent: true,
+      };
+
+      const firstId = section.elements[0]?.id || null;
+      state.selectedSectionForElement = firstId ? section.id : null;
+      state.selectedElementId = firstId;
+      state.selectedId = null;
       saveHistory(state);
     }),
 

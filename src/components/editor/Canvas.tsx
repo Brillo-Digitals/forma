@@ -80,7 +80,7 @@ export default function Canvas() {
                 boxShadow: currentViewport !== "desktop" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
               }}>
                 <SectionBlock id={section.id}>
-                  {renderSection(section)}
+                  {renderSection(section, currentViewport)}
                 </SectionBlock>
                 {/* Freeform element overlay — sits on top of section template */}
                 <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 10 }}>

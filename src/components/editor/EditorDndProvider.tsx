@@ -37,8 +37,11 @@ const SECTION_ICONS: Record<SectionType, React.ReactNode> = {
   faq: <HelpCircle size={20} />,
 };
 
-export function renderSection(section: SectionProps) {
-  const sectionStyle = section.style?.desktop || {};
+export function renderSection(section: SectionProps, viewport: 'desktop' | 'tablet' | 'mobile' = 'desktop') {
+  const sectionStyle = {
+    ...(section.style?.desktop || {}),
+    ...(viewport !== 'desktop' ? section.style?.[viewport] || {} : {}),
+  };
   
   // Merge with any props-based background
   const combinedStyle = {
@@ -60,6 +63,14 @@ export function renderSection(section: SectionProps) {
       {children}
     </div>
   );
+
+  if (Boolean(section.props?.freeformContent)) {
+    return (
+      <SectionWrapper>
+        <section className="w-full" />
+      </SectionWrapper>
+    );
+  }
 
   switch (section.type) {
     case "hero":         return <SectionWrapper><HeroSection {...section.props} /></SectionWrapper>;
