@@ -10,9 +10,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import TemplateGallery from "@/components/editor/TemplateGallery";
 import { exportToHTML } from "@/utils/exportHTML";
 import { saveProject } from "@/lib/db";
+import { publishPage } from "@/lib/publish";
 import { useEffect } from "react";
 import AuthGate from "@/components/auth/AuthGate";
 import { useAuth } from "@/context/AuthContext";
+import PublishModal from "@/components/editor/PublishModal";
+import EditorDndProvider from "@/components/editor/EditorDndProvider";
 
 export default function EditorPage() {
   const { sections, undo, redo, historyIndex, history, selectedId, lastSavedHistoryIndex, markSaved } = useBuilderStore();
@@ -23,6 +26,8 @@ export default function EditorPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [projectId, setProjectId] = useState<string | null>(null);
   const [pageTitle, setPageTitle] = useState("Untitled Page");
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
 
   const isUnsaved = historyIndex !== lastSavedHistoryIndex;
   
@@ -65,8 +70,26 @@ export default function EditorPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
     showToast("Page exported successfully");
+  };
+
+  const handlePublish = async () => {
+    if (!user) return;
+    setIsPublishing(true);
+    try {
+      // Save first to get a stable projectId
+      const savedId = await saveProject(user.uid, pageTitle, sections, projectId);
+      setProjectId(savedId);
+      markSaved();
+      const html = exportToHTML(sections);
+      const result = await publishPage(user.uid, savedId, html);
+      setPublishedUrl(result.url);
+    } catch (err) {
+      console.error(err);
+      showToast("Publish failed");
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   return (
@@ -139,17 +162,22 @@ export default function EditorPage() {
             >
               Save
             </button>
-            <button className="font-sans text-[13px] text-charcoal border border-charcoal px-4 py-1.5 rounded-[2px] hover:bg-charcoal hover:text-white transition-colors">
-              Preview
-            </button>
-            <button onClick={handleExport} className="font-sans text-[13px] text-white bg-wine px-4 py-1.5 rounded-[2px] hover:bg-wine-light transition-colors">
+            <button onClick={handleExport} className="font-sans text-[13px] text-charcoal border border-charcoal px-4 py-1.5 rounded-[2px] hover:bg-charcoal hover:text-white transition-colors">
               Export
+            </button>
+            <button 
+              onClick={handlePublish} 
+              disabled={isPublishing}
+              className="font-sans text-[13px] text-white bg-wine px-4 py-1.5 rounded-[2px] hover:bg-wine-light transition-colors disabled:opacity-60 flex items-center gap-1.5"
+            >
+              {isPublishing ? "Publishing..." : "Publish ↗"}
             </button>
         </div>
       </div>
 
       {/* Main Body */}
-      <div className="flex-1 flex overflow-hidden">
+      <EditorDndProvider>
+        <div className="flex-1 flex overflow-hidden">
         
         {/* LEFT COLUMN: Toolbar */}
         <div className="w-[64px] shrink-0 bg-charcoal border-r border-white/5 z-10 flex flex-col">
@@ -185,9 +213,16 @@ export default function EditorPage() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+        </div>
+      </EditorDndProvider>
 
       {showTemplates && <TemplateGallery onClose={() => setShowTemplates(false)} />}
+      
+      <AnimatePresence>
+        {publishedUrl && (
+          <PublishModal url={publishedUrl} onClose={() => setPublishedUrl(null)} />
+        )}
+      </AnimatePresence>
       
       <AnimatePresence>
         {toastMessage && (
@@ -195,7 +230,7 @@ export default function EditorPage() {
             initial={{ y: 50, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             exit={{ y: 50, opacity: 0 }}
-            className={`fixed bottom-6 left-1/2 -translate-x-1/2 text-white font-sans text-[13px] px-6 py-3 shadow-lg z-50 rounded-[2px] ${toastMessage.includes('failed') ? 'bg-red-500' : 'bg-charcoal'}`}
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 text-white font-sans text-[13px] px-6 py-3 shadow-lg z-50 rounded-[2px] ${toastMessage.includes('failed') ? 'bg-wine' : 'bg-charcoal'}`}
           >
             {toastMessage}
           </motion.div>

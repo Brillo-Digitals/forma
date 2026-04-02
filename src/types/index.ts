@@ -11,6 +11,7 @@ export interface PageState {
   sections: SectionProps[];
   selectedId: string | null;
   isDragging: boolean;
+  isGenerating: boolean;
   history: SectionProps[][];
   historyIndex: number;
   lastSavedHistoryIndex: number;

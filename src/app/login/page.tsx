@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       setError(null);
       await signIn();
-      // Router effect will handle redirect
+      router.replace("/");
     } catch (err: any) {
       setError(err.message || "Failed to sign in");
     }

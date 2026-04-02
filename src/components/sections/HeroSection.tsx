@@ -17,7 +17,7 @@ export default function HeroSection({
   ctaHref = "#",
   bgColor = "var(--color-cream)",
 }: HeroSectionProps) {
-  const ease = [0.22, 1, 0.36, 1];
+  const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
   return (
     <section

@@ -12,6 +12,7 @@ type BuilderStore = PageState & {
   undo: () => void;
   redo: () => void;
   setDragging: (isDragging: boolean) => void;
+  setGenerating: (isGenerating: boolean) => void;
   loadTemplate: (sections: SectionProps[]) => void;
   markSaved: () => void;
 };
@@ -45,11 +46,13 @@ export const useBuilderStore = create<BuilderStore>()(
     sections: [DEFAULT_PAGE],
     selectedId: null,
     isDragging: false,
+    isGenerating: false,
     history: [[DEFAULT_PAGE]],
     historyIndex: 0,
     lastSavedHistoryIndex: 0,
 
     setDragging: (isDragging) => set((state) => { state.isDragging = isDragging; }),
+    setGenerating: (isGenerating) => set((state) => { state.isGenerating = isGenerating; }),
 
     selectSection: (id) => set((state) => {
       state.selectedId = id;
