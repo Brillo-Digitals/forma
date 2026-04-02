@@ -16,12 +16,19 @@ export default function HeroSection({
   ctaText = "Start Building",
   ctaHref = "#",
   bgColor = "var(--color-cream)",
-}: HeroSectionProps) {
+  bgImage,
+}: HeroSectionProps & { bgImage?: string }) {
   const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
   return (
     <section
-      style={{ backgroundColor: bgColor, minHeight: "92vh" }}
+      style={{
+        backgroundColor: bgColor,
+        backgroundImage: bgImage ? `url(${bgImage})` : undefined,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "92vh",
+      }}
       className="w-full flex flex-col items-center justify-center text-center px-4"
     >
       <motion.div

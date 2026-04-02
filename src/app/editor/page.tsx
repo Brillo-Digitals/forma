@@ -18,10 +18,9 @@ import PublishModal from "@/components/editor/PublishModal";
 import EditorDndProvider from "@/components/editor/EditorDndProvider";
 
 export default function EditorPage() {
-  const { sections, undo, redo, historyIndex, history, selectedId, lastSavedHistoryIndex, markSaved } = useBuilderStore();
+  const { sections, undo, redo, historyIndex, history, selectedId, selectedElementId, currentViewport, setViewport, lastSavedHistoryIndex, markSaved } = useBuilderStore();
   const { user } = useAuth();
   
-  const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
   const [showTemplates, setShowTemplates] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -136,14 +135,14 @@ export default function EditorPage() {
 
           <div className="flex items-center gap-1 border-r border-divider pr-3 mr-1">
             <button
-              onClick={() => setViewMode("desktop")}
-              className={`p-1.5 rounded-[2px] transition-colors ${viewMode === "desktop" ? "bg-black/5 text-charcoal" : "text-stone hover:bg-black/5 hover:text-charcoal"}`}
+              onClick={() => setViewport("desktop")}
+              className={`p-1.5 rounded-[2px] transition-colors ${currentViewport === "desktop" ? "bg-black/5 text-charcoal" : "text-stone hover:bg-black/5 hover:text-charcoal"}`}
             >
               <Monitor size={16} />
             </button>
             <button
-              onClick={() => setViewMode("mobile")}
-              className={`p-1.5 rounded-[2px] transition-colors ${viewMode === "mobile" ? "bg-black/5 text-charcoal" : "text-stone hover:bg-black/5 hover:text-charcoal"}`}
+              onClick={() => setViewport("mobile")}
+              className={`p-1.5 rounded-[2px] transition-colors ${currentViewport === "mobile" ? "bg-black/5 text-charcoal" : "text-stone hover:bg-black/5 hover:text-charcoal"}`}
             >
               <Smartphone size={16} />
             </button>
@@ -185,14 +184,14 @@ export default function EditorPage() {
         </div>
 
         {/* CENTER COLUMN: Canvas */}
-        <div className={`flex-1 overflow-y-auto relative transition-colors duration-350 ${viewMode === "mobile" ? "bg-wine-muted" : "bg-cream"}`}>
+        <div className={`flex-1 overflow-y-auto relative transition-colors duration-350 ${currentViewport === "mobile" ? "bg-wine-muted" : "bg-cream"}`}>
           {/* Noise overlay */}
           <div className="pointer-events-none absolute inset-0 z-0 opacity-4" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
           
           <div className="relative z-10 w-full h-full flex justify-center py-8">
             <div 
-              style={{ width: viewMode === "mobile" ? "390px" : "100%", transition: "width 0.35s ease" }}
-              className={`min-h-full bg-cream mx-auto ${viewMode === "mobile" ? "border-x border-divider shadow-sm" : ""}`}
+              style={{ width: currentViewport === "mobile" ? "390px" : "100%", transition: "width 0.35s ease", position: "relative" }}
+              className={`min-h-full bg-cream mx-auto ${currentViewport === "mobile" ? "border-x border-divider shadow-sm" : ""}`}
             >
               <Canvas />
             </div>
@@ -201,7 +200,7 @@ export default function EditorPage() {
 
         {/* RIGHT COLUMN: Sidebar */}
         <AnimatePresence>
-          {selectedId && (
+          {(selectedId || selectedElementId) && (
             <motion.div
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}

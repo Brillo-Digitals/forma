@@ -1,8 +1,8 @@
 "use client";
 
 import { useBuilderStore } from "@/store/builderStore";
-import { SectionType } from "@/types";
-import { Layout, Layers, MessageSquare, Tag, PanelBottom, Undo2, Redo2, Sparkles } from "lucide-react";
+import { SectionType, ElementType } from "@/types";
+import { Layout, Layers, MessageSquare, Tag, PanelBottom, Undo2, Redo2, Sparkles, Award, Megaphone, HelpCircle, Type, ImageIcon, MousePointerClick, SquareDashed } from "lucide-react";
 import { useState } from "react";
 import AIGeneratorModal from "./AIGeneratorModal";
 import { useDraggable } from "@dnd-kit/core";
@@ -18,7 +18,17 @@ const SECTION_ITEMS: ToolbarItem[] = [
   { type: "features", icon: <Layers size={18} />, label: "Features" },
   { type: "testimonials", icon: <MessageSquare size={18} />, label: "Testimonials" },
   { type: "pricing", icon: <Tag size={18} />, label: "Pricing" },
+  { type: "logobar", icon: <Award size={18} />, label: "Logo Bar" },
+  { type: "cta", icon: <Megaphone size={18} />, label: "CTA Banner" },
+  { type: "faq", icon: <HelpCircle size={18} />, label: "FAQ" },
   { type: "footer", icon: <PanelBottom size={18} />, label: "Footer" },
+];
+
+const ELEMENT_ITEMS: { type: ElementType; icon: React.ReactNode; label: string }[] = [
+  { type: "text", icon: <Type size={18} />, label: "Text" },
+  { type: "image", icon: <ImageIcon size={18} />, label: "Image" },
+  { type: "button", icon: <MousePointerClick size={18} />, label: "Button" },
+  { type: "container", icon: <SquareDashed size={18} />, label: "Container" },
 ];
 
 // Individual draggable toolbar button
@@ -72,6 +82,15 @@ export default function Toolbar() {
     addSection(type);
   };
 
+  const targetSectionId = useBuilderStore(s => s.selectedId || s.selectedSectionForElement);
+  const addElement = useBuilderStore(s => s.addElement);
+
+  const handleAddElement = (type: ElementType) => {
+    if (targetSectionId) {
+      addElement(targetSectionId, type);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col h-full py-4 relative group/toolbar">
@@ -101,6 +120,28 @@ export default function Toolbar() {
               onClick={() => handleAddSection(item.type)}
             />
           ))}
+
+          {targetSectionId && (
+            <>
+              <div className="w-[32px] h-[1px] bg-white/10 mx-auto my-4 shrink-0" />
+              {ELEMENT_ITEMS.map((item) => (
+                <div key={item.type} className="relative group">
+                  <button
+                    onClick={() => handleAddElement(item.type)}
+                    title={`Add ${item.label}`}
+                    className="p-3 rounded transition-all duration-180 flex items-center justify-center select-none text-white/50 hover:text-white hover:bg-white/5"
+                  >
+                    {item.icon}
+                  </button>
+                  <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
+                    <div className="bg-charcoal text-white font-sans text-[12px] px-[10px] py-[6px] shadow-lg">
+                      Add {item.label}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
 
         <div className="w-[32px] h-[1px] bg-white/10 mx-auto my-4 shrink-0" />

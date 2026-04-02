@@ -1,5 +1,5 @@
 import { db, isDummyFirebase } from "./firebase";
-import { collection, doc, setDoc, getDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, query, where, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { SectionProps } from "@/types";
 
 export interface ProjectDoc {
@@ -111,4 +111,55 @@ export async function listProjects(userId: string): Promise<ProjectDoc[]> {
     const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
     return timeB - timeA;
   });
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
+  if (isDummyFirebase || !db) {
+    // LocalStorage Fallback
+    const projects = getLocalProjects();
+    const filtered = projects.filter(p => p.id !== projectId);
+    saveLocalProjects(filtered);
+    return;
+  }
+
+  // Real Firebase Implementation
+  const projRef = doc(db, "projects", projectId);
+  await deleteDoc(projRef);
+}
+
+export async function duplicateProject(
+  project: ProjectDoc,
+  userId: string,
+  newTitle: string
+): Promise<string> {
+  const newProjectId = `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  if (isDummyFirebase || !db) {
+    // LocalStorage Fallback
+    const projects = getLocalProjects();
+    const duplicatedProject: ProjectDoc = {
+      id: newProjectId,
+      title: newTitle,
+      sections: JSON.parse(JSON.stringify(project.sections)), // Deep copy
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      userId
+    };
+    projects.push(duplicatedProject);
+    saveLocalProjects(projects);
+    return newProjectId;
+  }
+
+  // Real Firebase Implementation
+  const projRef = doc(db, "projects", newProjectId);
+  await setDoc(projRef, {
+    id: newProjectId,
+    title: newTitle,
+    sections: project.sections,
+    userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  });
+
+  return newProjectId;
 }

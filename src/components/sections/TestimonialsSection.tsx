@@ -17,19 +17,19 @@ export interface TestimonialsSectionProps {
 const defaultTestimonials: TestimonialItem[] = [
   {
     id: "t1",
-    quote: "\"FORMA is the first builder that actually respects our design system instead of fighting against it.\"",
+    quote: "&ldquo;FORMA is the first builder that actually respects our design system instead of fighting against it.&rdquo;",
     authorName: "SARAH JENKINS",
     authorRole: "Design Director, Acme Corp"
   },
   {
     id: "t2",
-    quote: "\"We launched three new product pages this week. Before FORMA, that would have taken a month.\"",
+    quote: "&ldquo;We launched three new product pages this week. Before FORMA, that would have taken a month.&rdquo;",
     authorName: "MARCUS CHEN",
     authorRole: "Head of Growth, StartupInc"
   },
   {
     id: "t3",
-    quote: "\"The pixel-perfect export is what sold us. Production ready code right out of the box.\"",
+    quote: "&ldquo;The pixel-perfect export is what sold us. Production ready code right out of the box.&rdquo;",
     authorName: "ELENA ROSTOVA",
     authorRole: "Lead Engineer, TechFlow"
   }
