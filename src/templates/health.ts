@@ -14,6 +14,7 @@ export const healthTemplate: TemplateDefinition = {
         subheadline: "Board-certified physicians, same-day appointments, and compassionate guidance.",
         ctaText: "Book Appointment",
         ctaHref: "#",
+        bgColor: "#E8F7F1",
         bgImage: "https://picsum.photos/id/1025/1920/1080",
       },
       style: {
@@ -34,6 +35,11 @@ export const healthTemplate: TemplateDefinition = {
       props: {
         label: "WHY PATIENTS CHOOSE US",
         title: "Trusted Care for Every Stage",
+        bgColor: "#E6F4EF",
+        cardBgColor: "#FFFFFF",
+        accentColor: "#0F766E",
+        headlineColor: "#0F172A",
+        bodyColor: "#334155",
         features: [
           {
             id: "hl-f1",
@@ -71,6 +77,7 @@ export const healthTemplate: TemplateDefinition = {
       order: 2,
       props: {
         headline: "Questions Patients Ask Most",
+        bgColor: "#F8FFFC",
         faqs: [
           { question: "Do you accept walk-ins?", answer: "Yes. We keep limited same-day slots available for urgent needs." },
           { question: "Can I consult online?", answer: "Absolutely. Video consultations are available for follow-up and non-emergency care." },
@@ -97,6 +104,7 @@ export const healthTemplate: TemplateDefinition = {
         subheadline: "Schedule a visit and get a care plan built around your goals.",
         ctaText: "Request Visit",
         ctaHref: "#",
+        bgColor: "#115E59",
       },
       style: {
         desktop: {
@@ -115,6 +123,10 @@ export const healthTemplate: TemplateDefinition = {
       props: {
         brandName: "NOVA CLINIC",
         tagline: "Evidence-based care with a human touch.",
+        bgColor: "#0F4E49",
+        brandColor: "#ECFDF5",
+        taglineColor: "rgba(236,253,245,0.72)",
+        dividerColor: "rgba(236,253,245,0.22)",
       },
       style: {
         desktop: {

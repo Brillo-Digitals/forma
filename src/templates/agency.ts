@@ -13,10 +13,11 @@ export const agencyTemplate: TemplateDefinition = {
         headline: "Award-Winning Digital Agency",
         subheadline: "We build digital experiences that matter.",
         ctaText: "View Portfolio",
+        bgColor: "#F1F5FF",
       },
       style: {
         desktop: {
-          backgroundColor: "#FDFAF8",
+          backgroundColor: "#F1F5FF",
           minHeight: 600,
           paddingTop: 96,
           paddingBottom: 96,
@@ -31,6 +32,11 @@ export const agencyTemplate: TemplateDefinition = {
       props: {
         subtitle: "CAPABILITIES",
         title: "Our Expertise",
+        bgColor: "#EEF2FF",
+        cardBgColor: "#FFFFFF",
+        accentColor: "#7C3AED",
+        headlineColor: "#1E1B4B",
+        bodyColor: "#374151",
         features: [
           { title: "Brand Strategy", description: "Positioning your brand for the modern era." },
           { title: "Digital Design", description: "Award-winning interfaces and experiences." },
@@ -39,7 +45,7 @@ export const agencyTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#FDFAF8",
+          backgroundColor: "#EEF2FF",
           minHeight: 600,
           paddingTop: 96,
           paddingBottom: 96,
@@ -53,6 +59,12 @@ export const agencyTemplate: TemplateDefinition = {
       order: 2,
       props: {
         title: "Client Success",
+        bgColor: "#F5F3FF",
+        accentColor: "#EC4899",
+        lineColor: "#C4B5FD",
+        quoteColor: "#1F2937",
+        authorColor: "#111827",
+        roleColor: "#6B7280",
         testimonials: [
           { author: "Jane Doe", quote: "They completely transformed our business." },
           { author: "John Smith", quote: "The best agency we've ever worked with." },
@@ -61,7 +73,7 @@ export const agencyTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#F5EEF0",
+          backgroundColor: "#F5F3FF",
           minHeight: 600,
           paddingTop: 96,
           paddingBottom: 96,
@@ -74,11 +86,15 @@ export const agencyTemplate: TemplateDefinition = {
       type: "footer",
       order: 3,
       props: {
-        companyName: "Creative Agency",
+        brandName: "Creative Agency",
+        bgColor: "#1F2937",
+        brandColor: "#F9FAFB",
+        taglineColor: "rgba(249,250,251,0.72)",
+        dividerColor: "rgba(249,250,251,0.2)",
       },
       style: {
         desktop: {
-          backgroundColor: "#2A2228",
+          backgroundColor: "#1F2937",
           minHeight: 300,
           paddingTop: 48,
           paddingBottom: 48,

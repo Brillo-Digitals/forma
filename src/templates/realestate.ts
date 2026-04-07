@@ -14,15 +14,16 @@ export const realEstateTemplate: TemplateDefinition = {
         subheadline: "Discover architect-designed residences represented with discretion and expertise.",
         ctaText: "Browse Listings",
         ctaHref: "#",
+        bgColor: "#EEF2F7",
         bgImage: "https://picsum.photos/id/1043/1920/1080",
       },
       style: {
         desktop: {
-          backgroundColor: "#F6F3EF",
+          backgroundColor: "#EEF2F7",
           minHeight: 690,
           paddingTop: 100,
           paddingBottom: 100,
-          boxShadow: "inset 0 0 0 9999px rgba(246,243,239,0.35)",
+          boxShadow: "inset 0 0 0 9999px rgba(238,242,247,0.4)",
         },
       },
       elements: [],
@@ -34,6 +35,11 @@ export const realEstateTemplate: TemplateDefinition = {
       props: {
         label: "OUR EDGE",
         title: "A Refined Buying Experience",
+        bgColor: "#F3F6FA",
+        cardBgColor: "#FFFFFF",
+        accentColor: "#334155",
+        headlineColor: "#0F172A",
+        bodyColor: "#475569",
         features: [
           {
             id: "re-f1",
@@ -57,7 +63,7 @@ export const realEstateTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#FCFAF8",
+          backgroundColor: "#F3F6FA",
           minHeight: 620,
           paddingTop: 92,
           paddingBottom: 92,
@@ -71,6 +77,18 @@ export const realEstateTemplate: TemplateDefinition = {
       order: 2,
       props: {
         title: "Representation Packages",
+        bgColor: "#111827",
+        titleColor: "#E5E7EB",
+        cardBackground: "rgba(148,163,184,0.14)",
+        cardBorderColor: "rgba(148,163,184,0.34)",
+        textColor: "#F3F4F6",
+        mutedTextColor: "rgba(229,231,235,0.76)",
+        badgeBackground: "#CBD5E1",
+        badgeTextColor: "#0F172A",
+        buttonBorderColor: "#CBD5E1",
+        buttonTextColor: "#E2E8F0",
+        buttonHoverBg: "#E2E8F0",
+        buttonHoverText: "#111827",
         tiers: [
           {
             id: "re-p1",
@@ -93,7 +111,7 @@ export const realEstateTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#2A2228",
+          backgroundColor: "#111827",
           minHeight: 620,
           paddingTop: 92,
           paddingBottom: 92,
@@ -107,6 +125,12 @@ export const realEstateTemplate: TemplateDefinition = {
       order: 3,
       props: {
         label: "CLIENT STORIES",
+        bgColor: "#F8FAFC",
+        accentColor: "#475569",
+        lineColor: "#CBD5E1",
+        quoteColor: "#111827",
+        authorColor: "#0F172A",
+        roleColor: "#64748B",
         testimonials: [
           {
             id: "re-t1",
@@ -130,7 +154,7 @@ export const realEstateTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#F1EAE1",
+          backgroundColor: "#F8FAFC",
           minHeight: 600,
           paddingTop: 90,
           paddingBottom: 90,
@@ -145,10 +169,14 @@ export const realEstateTemplate: TemplateDefinition = {
       props: {
         brandName: "ATELIER ESTATES",
         tagline: "Exceptional properties, intelligently represented.",
+        bgColor: "#0B1220",
+        brandColor: "#F1F5F9",
+        taglineColor: "rgba(241,245,249,0.72)",
+        dividerColor: "rgba(241,245,249,0.22)",
       },
       style: {
         desktop: {
-          backgroundColor: "#1D181D",
+          backgroundColor: "#0B1220",
           minHeight: 250,
           paddingTop: 40,
           paddingBottom: 40,

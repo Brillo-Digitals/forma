@@ -14,15 +14,16 @@ export const travelTemplate: TemplateDefinition = {
         subheadline: "Private villas, hidden coastlines, and seamless itineraries tailored to your style.",
         ctaText: "Plan My Escape",
         ctaHref: "#",
+        bgColor: "#E6F4FF",
         bgImage: "https://picsum.photos/id/1018/1920/1080",
       },
       style: {
         desktop: {
-          backgroundColor: "#F8F4EE",
+          backgroundColor: "#E6F4FF",
           minHeight: 680,
           paddingTop: 96,
           paddingBottom: 96,
-          boxShadow: "inset 0 0 0 9999px rgba(248,244,238,0.35)",
+          boxShadow: "inset 0 0 0 9999px rgba(230,244,255,0.42)",
         },
       },
       elements: [],
@@ -34,6 +35,11 @@ export const travelTemplate: TemplateDefinition = {
       props: {
         label: "EXPERIENCES",
         title: "Travel Designed Around You",
+        bgColor: "#EAF8FF",
+        cardBgColor: "#FFFFFF",
+        accentColor: "#0284C7",
+        headlineColor: "#0F172A",
+        bodyColor: "#334155",
         features: [
           {
             id: "tr-f1",
@@ -57,7 +63,7 @@ export const travelTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#FCF9F5",
+          backgroundColor: "#EAF8FF",
           minHeight: 620,
           paddingTop: 92,
           paddingBottom: 92,
@@ -71,6 +77,12 @@ export const travelTemplate: TemplateDefinition = {
       order: 2,
       props: {
         label: "TRAVELER NOTES",
+        bgColor: "#F0FAFF",
+        accentColor: "#0891B2",
+        lineColor: "#BAE6FD",
+        quoteColor: "#0F172A",
+        authorColor: "#1E293B",
+        roleColor: "#475569",
         testimonials: [
           {
             id: "tr-t1",
@@ -94,7 +106,7 @@ export const travelTemplate: TemplateDefinition = {
       },
       style: {
         desktop: {
-          backgroundColor: "#F3ECE5",
+          backgroundColor: "#F0FAFF",
           minHeight: 600,
           paddingTop: 92,
           paddingBottom: 92,
@@ -111,15 +123,16 @@ export const travelTemplate: TemplateDefinition = {
         subheadline: "Tell us your dream destination and we will design the perfect route.",
         ctaText: "Book Consultation",
         ctaHref: "#",
+        bgColor: "#0B2239",
         bgImage: "https://picsum.photos/id/1015/1920/1080",
       },
       style: {
         desktop: {
-          backgroundColor: "#272119",
+          backgroundColor: "#0B2239",
           minHeight: 520,
           paddingTop: 92,
           paddingBottom: 92,
-          boxShadow: "inset 0 0 0 9999px rgba(39,33,25,0.55)",
+          boxShadow: "inset 0 0 0 9999px rgba(11,34,57,0.58)",
         },
       },
       elements: [],
@@ -131,10 +144,14 @@ export const travelTemplate: TemplateDefinition = {
       props: {
         brandName: "AURELIA TRAVEL",
         tagline: "Luxury itineraries crafted worldwide.",
+        bgColor: "#0A2F4E",
+        brandColor: "#E0F2FE",
+        taglineColor: "rgba(224,242,254,0.72)",
+        dividerColor: "rgba(224,242,254,0.2)",
       },
       style: {
         desktop: {
-          backgroundColor: "#1E1A16",
+          backgroundColor: "#0A2F4E",
           minHeight: 260,
           paddingTop: 42,
           paddingBottom: 42,

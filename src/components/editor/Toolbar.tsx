@@ -2,7 +2,7 @@
 
 import { useBuilderStore } from "@/store/builderStore";
 import { SectionType, ElementType } from "@/types";
-import { Layout, Layers, MessageSquare, Tag, PanelBottom, Undo2, Redo2, Sparkles, Award, Megaphone, HelpCircle, Type, ImageIcon, MousePointerClick, SquareDashed } from "lucide-react";
+import { Layout, Layers, MessageSquare, Tag, PanelBottom, Undo2, Redo2, Sparkles, Award, Megaphone, HelpCircle, Type, ImageIcon, MousePointerClick, SquareDashed, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useState } from "react";
 import AIGeneratorModal from "./AIGeneratorModal";
 import { useDraggable } from "@dnd-kit/core";
@@ -11,6 +11,11 @@ interface ToolbarItem {
   type: SectionType;
   icon: React.ReactNode;
   label: string;
+}
+
+interface ToolbarProps {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 const SECTION_ITEMS: ToolbarItem[] = [
@@ -32,7 +37,7 @@ const ELEMENT_ITEMS: { type: ElementType; icon: React.ReactNode; label: string }
 ];
 
 // Individual draggable toolbar button
-function DraggableToolbarItem({ item, onClick }: { item: ToolbarItem; onClick: () => void }) {
+function DraggableToolbarItem({ item, onClick, collapsed }: { item: ToolbarItem; onClick: () => void; collapsed: boolean }) {
   const { sections } = useBuilderStore();
   const isActive = sections.some((s) => s.type === item.type);
 
@@ -49,27 +54,32 @@ function DraggableToolbarItem({ item, onClick }: { item: ToolbarItem; onClick: (
         {...attributes}
         onClick={onClick}
         title={`Drag or click to add ${item.label}`}
-        className={`p-3 rounded transition-all duration-180 flex items-center justify-center select-none
-          ${isDragging ? "opacity-40 scale-95" : ""}
-          ${isActive ? "text-gold" : "text-white/50 hover:text-white hover:bg-white/5"}
+        className={`${collapsed ? "h-10 w-10" : "h-10 w-full px-3"} rounded-[10px] border transition-all duration-200 flex items-center ${collapsed ? "justify-center" : "justify-start gap-2"} select-none
+          ${isDragging ? "opacity-45 scale-95" : ""}
+          ${isActive
+            ? "text-cyan-200 border-cyan-300/40 bg-cyan-400/10 shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+            : "text-slate-300 border-transparent hover:text-white hover:border-white/15 hover:bg-white/8"}
         `}
         style={{ touchAction: "none" }}
       >
         {item.icon}
+        {!collapsed && <span className="text-[12px] font-medium">{item.label}</span>}
       </button>
 
       {/* Tooltip */}
-      <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
-        <div className="bg-charcoal text-white font-sans text-[12px] px-[10px] py-[6px] shadow-lg">
-          {item.label}
+      {collapsed && (
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
+          <div className="bg-slate-900 text-slate-100 font-sans text-[12px] px-[10px] py-[6px] shadow-lg rounded-[6px] border border-slate-700/70">
+            {item.label}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-export default function Toolbar() {
-  const { sections, addSection, undo, redo, historyIndex, history } = useBuilderStore();
+export default function Toolbar({ collapsed, onToggleCollapse }: ToolbarProps) {
+  const { addSection, undo, redo, historyIndex, history } = useBuilderStore();
   const [showAI, setShowAI] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
 
@@ -93,89 +103,119 @@ export default function Toolbar() {
 
   return (
     <>
-      <div className="flex flex-col h-full py-4 relative group/toolbar">
-        <div className="flex-1 flex flex-col items-center gap-2">
+      <div className="flex flex-col h-full p-2 relative">
+        <div className="h-full rounded-[14px] border border-white/10 bg-[linear-gradient(180deg,#1f2430_0%,#161b25_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col py-3 px-2">
+        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"} mb-2`}>
+          {!collapsed && <span className="text-[10px] uppercase tracking-[0.12em] text-slate-400 font-semibold">Builder Tools</span>}
+          <button
+            onClick={onToggleCollapse}
+            className="h-8 w-8 rounded-[8px] border border-white/10 text-slate-300 hover:text-white hover:bg-white/8 transition-colors flex items-center justify-center"
+            title={collapsed ? "Expand toolbar" : "Collapse toolbar"}
+          >
+            {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
+          </button>
+        </div>
+
+        <div className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1 flex flex-col ${collapsed ? "items-center" : "items-stretch"} gap-2`}>
 
           {/* AI Generator Trigger */}
-          <div className="relative group mb-4">
+          <div className="relative group mb-2">
             <button
               onClick={() => setShowAI(true)}
-              className="p-3 rounded transition-all duration-180 flex items-center justify-center bg-wine/20 text-wine hover:bg-wine hover:text-white"
+              className={`${collapsed ? "h-10 w-10" : "h-10 w-full px-3"} rounded-[10px] transition-all duration-200 flex items-center ${collapsed ? "justify-center" : "justify-start gap-2"} bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-950 hover:brightness-110 shadow-[0_6px_14px_rgba(14,165,233,0.35)]`}
             >
               <Sparkles size={18} />
+              {!collapsed && <span className="text-[12px] font-semibold">AI Generate</span>}
             </button>
-            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
-              <div className="bg-charcoal text-white font-sans text-[12px] px-[10px] py-[6px] shadow-lg">
-                AI Generate
+            {collapsed && (
+              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
+                <div className="bg-slate-900 text-slate-100 font-sans text-[12px] px-[10px] py-[6px] shadow-lg rounded-[6px] border border-slate-700/70">
+                  AI Generate
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="w-[32px] h-[1px] bg-white/10 mx-auto mb-4 shrink-0" />
+          <span className={`text-[9px] uppercase tracking-[0.14em] text-slate-400 font-semibold mb-1 ${collapsed ? "text-center" : "px-1"}`}>Sections</span>
+
+          <div className={`${collapsed ? "w-[36px]" : "w-full"} h-[1px] bg-white/12 mx-auto mb-3 shrink-0`} />
 
           {SECTION_ITEMS.map((item) => (
             <DraggableToolbarItem
               key={item.type}
               item={item}
               onClick={() => handleAddSection(item.type)}
+              collapsed={collapsed}
             />
           ))}
 
           {targetSectionId && (
             <>
-              <div className="w-[32px] h-[1px] bg-white/10 mx-auto my-4 shrink-0" />
+              <div className={`${collapsed ? "w-[36px]" : "w-full"} h-[1px] bg-white/12 mx-auto my-3 shrink-0`} />
+              <span className={`text-[9px] uppercase tracking-[0.14em] text-slate-400 font-semibold mb-1 ${collapsed ? "text-center" : "px-1"}`}>Elements</span>
               {ELEMENT_ITEMS.map((item) => (
                 <div key={item.type} className="relative group">
                   <button
                     onClick={() => handleAddElement(item.type)}
                     title={`Add ${item.label}`}
-                    className="p-3 rounded transition-all duration-180 flex items-center justify-center select-none text-white/50 hover:text-white hover:bg-white/5"
+                    className={`${collapsed ? "h-10 w-10" : "h-10 w-full px-3"} rounded-[10px] border border-transparent transition-all duration-200 flex items-center ${collapsed ? "justify-center" : "justify-start gap-2"} select-none text-slate-300 hover:text-white hover:border-white/15 hover:bg-white/8`}
                   >
                     {item.icon}
+                    {!collapsed && <span className="text-[12px] font-medium">{item.label}</span>}
                   </button>
-                  <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
-                    <div className="bg-charcoal text-white font-sans text-[12px] px-[10px] py-[6px] shadow-lg">
-                      Add {item.label}
+                  {collapsed && (
+                    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
+                      <div className="bg-slate-900 text-slate-100 font-sans text-[12px] px-[10px] py-[6px] shadow-lg rounded-[6px] border border-slate-700/70">
+                        Add {item.label}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </>
           )}
         </div>
 
-        <div className="w-[32px] h-[1px] bg-white/10 mx-auto my-4 shrink-0" />
+        <div className={`${collapsed ? "w-[36px]" : "w-full"} h-[1px] bg-white/12 mx-auto my-3 shrink-0`} />
+        <span className={`text-[9px] uppercase tracking-[0.14em] text-slate-400 font-semibold mb-2 ${collapsed ? "text-center" : "px-1"}`}>History</span>
 
-        <div className="flex flex-col items-center gap-2 shrink-0">
+        <div className={`flex flex-col ${collapsed ? "items-center" : "items-stretch"} gap-2 shrink-0`}>
           <div className="relative group">
             <button
               onClick={undo}
               disabled={historyIndex <= 0}
-              className="p-3 rounded transition-all duration-180 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent"
+              className={`${collapsed ? "h-10 w-10" : "h-10 w-full px-3"} rounded-[10px] border border-transparent transition-all duration-200 flex items-center ${collapsed ? "justify-center" : "justify-start gap-2"} text-slate-300 hover:text-white hover:border-white/15 hover:bg-white/8 disabled:opacity-30 disabled:hover:bg-transparent`}
             >
               <Undo2 size={18} />
+              {!collapsed && <span className="text-[12px] font-medium">Undo</span>}
             </button>
-            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
-              <div className="bg-charcoal text-white font-sans text-[12px] px-[10px] py-[6px] shadow-lg">
-                Undo
+            {collapsed && (
+              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
+                <div className="bg-slate-900 text-slate-100 font-sans text-[12px] px-[10px] py-[6px] shadow-lg rounded-[6px] border border-slate-700/70">
+                  Undo
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="relative group">
             <button
               onClick={redo}
               disabled={historyIndex >= history.length - 1}
-              className="p-3 rounded transition-all duration-180 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent"
+              className={`${collapsed ? "h-10 w-10" : "h-10 w-full px-3"} rounded-[10px] border border-transparent transition-all duration-200 flex items-center ${collapsed ? "justify-center" : "justify-start gap-2"} text-slate-300 hover:text-white hover:border-white/15 hover:bg-white/8 disabled:opacity-30 disabled:hover:bg-transparent`}
             >
               <Redo2 size={18} />
+              {!collapsed && <span className="text-[12px] font-medium">Redo</span>}
             </button>
-            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
-              <div className="bg-charcoal text-white font-sans text-[12px] px-[10px] py-[6px] shadow-lg">
-                Redo
+            {collapsed && (
+              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-180 z-50 whitespace-nowrap">
+                <div className="bg-slate-900 text-slate-100 font-sans text-[12px] px-[10px] py-[6px] shadow-lg rounded-[6px] border border-slate-700/70">
+                  Redo
+                </div>
               </div>
-            </div>
+            )}
           </div>
+        </div>
         </div>
       </div>
 

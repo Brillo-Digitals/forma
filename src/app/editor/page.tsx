@@ -41,6 +41,7 @@ export default function EditorPage() {
   const [pageTitle, setPageTitle] = useState("Untitled Page");
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
+  const [isToolbarCollapsed, setIsToolbarCollapsed] = useState(false);
 
   const isUnsaved = historyIndex !== lastSavedHistoryIndex;
   
@@ -220,8 +221,11 @@ export default function EditorPage() {
         <div className="flex-1 flex overflow-hidden">
         
         {/* LEFT COLUMN: Toolbar */}
-        <div className="w-[64px] shrink-0 bg-charcoal border-r border-white/5 z-10 flex flex-col">
-          <Toolbar />
+        <div className={`${isToolbarCollapsed ? "w-[84px]" : "w-[232px]"} shrink-0 bg-charcoal border-r border-white/5 z-10 flex flex-col transition-[width] duration-300`}>
+          <Toolbar
+            collapsed={isToolbarCollapsed}
+            onToggleCollapse={() => setIsToolbarCollapsed((prev) => !prev)}
+          />
         </div>
 
         {/* CENTER COLUMN: Canvas */}
