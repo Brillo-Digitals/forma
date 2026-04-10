@@ -12,6 +12,15 @@ interface Props {
   onShowToast: (msg: string, isError?: boolean) => void;
 }
 
+const SUGGESTED_PROMPTS = [
+  "A landing page for a travel startup offering weekend getaways from Lagos.",
+  "A modern SaaS page for a team productivity app with clear pricing.",
+  "A conversion-focused page for a fitness coaching brand targeting beginners.",
+  "A premium landing page for a real estate company selling waterfront homes.",
+];
+
+const ALLOWED_TYPES = new Set(["hero", "features", "testimonials", "pricing", "footer"]);
+
 // --- Mock generation: keyword-aware layout builder ---
 function buildMockSections(prompt: string): SectionProps[] {
   const p = prompt.toLowerCase();
@@ -50,20 +59,21 @@ function buildMockSections(prompt: string): SectionProps[] {
   sections.push({
     id: generateId(), type: "features", order: 1,
     props: {
-      headline: has("saas") ? "Everything you need" : has("agency") ? "How we deliver" : "Why teams choose us",
+      label: has("saas") ? "PRODUCT CAPABILITIES" : has("agency") ? "DELIVERY PROCESS" : "WHY CHOOSE US",
+      title: has("saas") ? "Everything you need" : has("agency") ? "How we deliver" : "Why teams choose us",
       features: [
         {
-          icon: "⚡",
+          iconName: "LayoutGrid",
           title: has("saas") ? "Lightning Fast" : has("agency") ? "Strategy First" : "Purpose-Built",
           description: "Designed from the ground up for performance and clarity at every stage."
         },
         {
-          icon: "🎯",
+          iconName: "MousePointer2",
           title: has("saas") ? "Precision Targeting" : has("agency") ? "Creative Excellence" : "Results Driven",
           description: "Every decision backed by data and tailored to your specific goals."
         },
         {
-          icon: "🔒",
+          iconName: "Download",
           title: has("saas") ? "Enterprise-Grade Security" : has("agency") ? "Reliable Delivery" : "Trusted by Many",
           description: "Built with the highest standards so you can focus on growing."
         }
@@ -76,10 +86,10 @@ function buildMockSections(prompt: string): SectionProps[] {
     sections.push({
       id: generateId(), type: "testimonials", order: 2,
       props: {
-        headline: "Loved by customers",
+        label: "LOVED BY CUSTOMERS",
         testimonials: [
-          { quote: "This transformed how our team operates. We shipped our MVP in 2 weeks.", author: "Amara B.", role: "Founder" },
-          { quote: "The attention to detail is unlike anything else I've used.", author: "Chris M.", role: "Product Lead" }
+          { quote: "This transformed how our team operates. We shipped our MVP in 2 weeks.", authorName: "Amara B.", authorRole: "Founder" },
+          { quote: "The attention to detail is unlike anything else I've used.", authorName: "Chris M.", authorRole: "Product Lead" }
         ]
       }
     });
@@ -90,10 +100,10 @@ function buildMockSections(prompt: string): SectionProps[] {
     sections.push({
       id: generateId(), type: "pricing", order: sections.length,
       props: {
-        headline: "Simple, transparent pricing",
-        plans: [
-          { name: "Starter", price: "$0", period: "/ month", features: ["Up to 3 projects", "Basic analytics", "Email support"], cta: "Get Started" },
-          { name: "Pro", price: "$49", period: "/ month", features: ["Unlimited projects", "Advanced analytics", "Priority support", "Team collaboration"], cta: "Start Trial", featured: true },
+        title: "Simple, transparent pricing",
+        tiers: [
+          { id: generateId(), name: "Starter", price: "$0/mo", features: ["Up to 3 projects", "Basic analytics", "Email support"], ctaText: "Get Started" },
+          { id: generateId(), name: "Pro", price: "$49/mo", features: ["Unlimited projects", "Advanced analytics", "Priority support", "Team collaboration"], ctaText: "Start Trial", isPopular: true },
         ]
       }
     });
@@ -111,29 +121,124 @@ function buildMockSections(prompt: string): SectionProps[] {
   return sections;
 }
 
+function toRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function toString(value: unknown, fallback = ""): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function normalizeGeneratedSections(input: unknown): SectionProps[] {
+  if (!Array.isArray(input)) return [];
+
+  const normalized = input
+    .map((section, index): SectionProps | null => {
+      const rawSection = toRecord(section);
+      const rawType = toString(rawSection.type).toLowerCase();
+      if (!ALLOWED_TYPES.has(rawType)) return null;
+
+      const rawProps = toRecord(rawSection.props);
+      let normalizedProps: Record<string, unknown> = { ...rawProps };
+
+      if (rawType === "features") {
+        const rawFeatures = Array.isArray(rawProps.features) ? rawProps.features : [];
+        normalizedProps = {
+          label: toString(rawProps.label, "WHY FORMA"),
+          title: toString(rawProps.title || rawProps.headline, "Design Without Compromise"),
+          features: rawFeatures.map((item, featureIndex) => {
+            const f = toRecord(item);
+            const iconName = ["LayoutGrid", "MousePointer2", "Download"][featureIndex % 3];
+            return {
+              id: toString(f.id, generateId()),
+              title: toString(f.title, `Feature ${featureIndex + 1}`),
+              description: toString(f.description, "Feature description"),
+              iconName: toString(f.iconName || f.icon, iconName),
+            };
+          }),
+        };
+      }
+
+      if (rawType === "testimonials") {
+        const rawTestimonials = Array.isArray(rawProps.testimonials) ? rawProps.testimonials : [];
+        normalizedProps = {
+          label: toString(rawProps.label || rawProps.title || rawProps.headline, "WHAT THEY SAY"),
+          testimonials: rawTestimonials.map((item, testimonialIndex) => {
+            const t = toRecord(item);
+            return {
+              id: toString(t.id, generateId()),
+              quote: toString(t.quote, `Customer quote ${testimonialIndex + 1}`),
+              authorName: toString(t.authorName || t.author, "Customer"),
+              authorRole: toString(t.authorRole || t.role, ""),
+            };
+          }),
+        };
+      }
+
+      if (rawType === "pricing") {
+        const rawTiers = Array.isArray(rawProps.tiers)
+          ? rawProps.tiers
+          : Array.isArray(rawProps.plans)
+            ? rawProps.plans
+            : [];
+        normalizedProps = {
+          title: toString(rawProps.title || rawProps.headline, "Simple, Transparent Pricing"),
+          tiers: rawTiers.map((item, tierIndex) => {
+            const t = toRecord(item);
+            return {
+              id: toString(t.id, generateId()),
+              name: toString(t.name, `Plan ${tierIndex + 1}`),
+              price: toString(t.price, "$0/mo"),
+              features: Array.isArray(t.features) ? t.features : [],
+              ctaText: toString(t.ctaText || t.cta || t.buttonText, "Get Started"),
+              ctaHref: toString(t.ctaHref || t.href, "#"),
+              isPopular: Boolean(t.isPopular || t.featured),
+            };
+          }),
+        };
+      }
+
+      if (rawType === "hero") {
+        normalizedProps = {
+          headline: toString(rawProps.headline, "Built for What Comes Next"),
+          subheadline: toString(rawProps.subheadline, "Launch quickly with polished sections and clear messaging."),
+          ctaText: toString(rawProps.ctaText, "Get Started"),
+          ctaHref: toString(rawProps.ctaHref, "#"),
+        };
+      }
+
+      if (rawType === "footer") {
+        normalizedProps = {
+          brandName: toString(rawProps.brandName, "FORMA"),
+          tagline: toString(rawProps.tagline, "Built with care."),
+        };
+      }
+
+      return {
+        id: toString(rawSection.id, generateId()),
+        type: rawType as SectionProps["type"],
+        order: index,
+        props: normalizedProps,
+        elements: [],
+      };
+    })
+    .filter((section): section is SectionProps => Boolean(section));
+
+  return normalized.length > 0 ? normalized : [];
+}
+
 export default function AIGeneratorModal({ onClose, onShowToast }: Props) {
   const [prompt, setPrompt] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { setGenerating, loadTemplate } = useBuilderStore();
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || isSubmitting) return;
 
+    setIsSubmitting(true);
     setGenerating(true);
-    onClose();
-
-    const isDummy = !process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY ||
-      process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY === "dummy";
-
-    if (isDummy) {
-      // Build a real mock layout from the prompt keywords
-      setTimeout(() => {
-        const mockSections = buildMockSections(prompt);
-        loadTemplate(mockSections);
-        setGenerating(false);
-        onShowToast("Page generated. Review and refine.");
-      }, 2800);
-      return;
-    }
 
     try {
       const res = await fetch("/api/generate", {
@@ -142,20 +247,43 @@ export default function AIGeneratorModal({ onClose, onShowToast }: Props) {
         body: JSON.stringify({ prompt }),
       });
 
-      if (!res.ok) throw new Error("Generation request failed");
+      const data = await res.json().catch(() => null);
 
-      const data = await res.json();
-      if (data.sections && Array.isArray(data.sections)) {
-        loadTemplate(data.sections);
-        onShowToast("Page generated. Review and refine.");
-      } else {
+      if (!res.ok) {
+        const message = data?.error || "Generation request failed";
+        throw new Error(message);
+      }
+
+      const normalizedSections = normalizeGeneratedSections(data?.sections);
+      if (normalizedSections.length === 0) {
         throw new Error("Invalid output layout");
       }
+
+      loadTemplate(normalizedSections);
+      onShowToast("Page generated with AI.");
+      onClose();
     } catch (err) {
       console.error(err);
-      onShowToast("Generation failed. Try again.", true);
+      const msg = err instanceof Error ? err.message : "Generation request failed";
+      const quotaExceeded = /quota|429|rate limit/i.test(msg);
+      try {
+        const mockSections = normalizeGeneratedSections(buildMockSections(prompt));
+        if (mockSections.length === 0) {
+          throw new Error("Mock generation failed");
+        }
+        loadTemplate(mockSections);
+        onShowToast(
+          quotaExceeded
+            ? "Gemini quota exceeded. Loaded a local mock layout instead."
+            : "AI request failed. Generated a local mock layout instead."
+        );
+        onClose();
+      } catch {
+        onShowToast("Generation failed. Try again.", true);
+      }
     } finally {
       setGenerating(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -192,6 +320,22 @@ export default function AIGeneratorModal({ onClose, onShowToast }: Props) {
             Describe your product or brand and we'll build the layout for you.
           </p>
 
+          <div className="w-full mb-4">
+            <p className="text-[11px] uppercase tracking-[0.08em] text-stone mb-2">Suggested prompts</p>
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTED_PROMPTS.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setPrompt(item)}
+                  className="text-left text-[11px] leading-[1.4] bg-white border border-divider px-3 py-2 text-charcoal hover:border-wine/50 hover:bg-wine/5 transition-colors"
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -201,14 +345,14 @@ export default function AIGeneratorModal({ onClose, onShowToast }: Props) {
             autoFocus
             className="w-full border border-divider focus:border-wine outline-none bg-white font-sans text-[14px] text-charcoal p-4 mb-2 resize-none transition-colors"
           />
-          <p className="text-[11px] text-stone/60 self-start mb-6">⌘ + Enter to generate</p>
+          <p className="text-[11px] text-stone/60 self-start mb-6">Ctrl/Cmd + Enter to generate</p>
 
           <button
             onClick={handleGenerate}
-            disabled={!prompt.trim()}
+            disabled={!prompt.trim() || isSubmitting}
             className="bg-wine text-white font-sans text-[13px] px-8 py-3 rounded-none hover:bg-wine-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full flex items-center justify-center gap-2"
           >
-            <Sparkles size={16} /> Generate Layout
+            <Sparkles size={16} /> {isSubmitting ? "Generating with AI..." : "Generate with AI"}
           </button>
         </div>
       </motion.div>
